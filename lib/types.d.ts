@@ -15,3 +15,5 @@ type ChoreLogType = ChoreLog["type"];
 interface ChoreWithQueue extends Chore {
   queue: string[];
 }
+
+type ChoreViewIntent = "create" | "update" | "view";

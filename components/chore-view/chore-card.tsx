@@ -13,7 +13,7 @@ export default function ChoreCard({ choreId }: { choreId: string }) {
   return (
     <div className="flex gap-2 items-center p-4 rounded-lg w-full cursor-pointer hover:bg-white/5 transition-colors">
       <div>
-        <p>{chore.emoji}</p>
+        <p className="text-xl">{chore.emoji}</p>
       </div>
       <div>
         <p className="text-lg text-w11">Due {formatDate(chore.due_date)}</p>
