@@ -15,12 +15,12 @@ interface ButtonAnchorProps
 }
 
 const buttonStyles = cva(
-  "rounded-lg flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1",
+  "rounded-lg flex gap-2 items-center justify-center cursor-pointer outline-none focus-visible:ring-1",
   {
     variants: {
       variant: {
         glass: "p-4 bg-white/5 hover:bg-white/8 transition-colors",
-        primary: "p-4 bg-blue-400 hover:bg-blue-500 transition-colors",
+        primary: "px-4 py-2 bg-primary hover:brightness-105 transition-colors",
         ghost:
           "p-2 after:bg-white/5 after:content-[''] after:absolute relative after:top-1/2 after:left-1/2 after:p-4 after:w-full after:h-full after:invisible hover:after:visible after:-translate-1/2 after:rounded-lg"
       }

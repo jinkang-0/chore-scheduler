@@ -36,3 +36,15 @@ export async function getLogsForChore(choreId: string) {
     .from(choreLogTable)
     .where(eq(choreLogTable.chore_id, choreId));
 }
+
+/**
+ * Get all users from the database.
+ */
+export async function getPeople() {
+  return await db
+    .select({
+      id: userTable.id,
+      name: userTable.name
+    })
+    .from(userTable);
+}

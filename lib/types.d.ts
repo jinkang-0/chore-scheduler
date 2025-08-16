@@ -17,3 +17,8 @@ interface ChoreWithQueue extends Chore {
 }
 
 type ChoreViewIntent = "create" | "update" | "view";
+
+interface DropdownOption {
+  label: string;
+  value: string;
+}

@@ -10,6 +10,7 @@ interface AppStateContextValue {
 
 const AppStateContext = createContext<AppStateContextValue | null>(null);
 
+// hook to use app state context
 export const useAppState = () => {
   const context = useContext(AppStateContext);
   if (!context) {
@@ -18,6 +19,7 @@ export const useAppState = () => {
   return context;
 };
 
+// context provider
 export function AppStateProvider({ children }: { children: React.ReactNode }) {
   const [choreMap, setChoreMap] = useState<Record<
     string,
@@ -25,6 +27,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
   > | null>(null);
   const fetched = useRef(false);
 
+  // fetch chores on mount
   useEffect(() => {
     if (fetched.current) return; // prevent multiple fetches
     fetched.current = true;

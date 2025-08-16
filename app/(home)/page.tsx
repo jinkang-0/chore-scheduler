@@ -7,6 +7,7 @@ import { useAppState } from "@/context/app-state";
 import { LuClipboardList, LuPlus, LuUser } from "react-icons/lu";
 import { useSearchParams } from "next/navigation";
 import CreateForm from "@/components/chore-view/create-form";
+import { HomeDialogProvider, useHomeDialog } from "@/context/home-dialog";
 
 function ViewDecider() {
   const searchParams = useSearchParams();
@@ -25,9 +26,10 @@ function ViewDecider() {
 
 export default function Home() {
   const { choreMap } = useAppState();
+  const { setModalNaturallyOpened } = useHomeDialog();
 
   return (
-    <main className="grid grid-cols-10 p-16 h-full">
+    <main className="grid grid-cols-10 p-6 sm:p-16 h-full w-full max-w-[1200px] mx-auto">
       <div className="col-span-10 md:col-span-4 flex flex-col h-full gap-4">
         <div className="flex items-center gap-11 mb-4">
           <Tab href="/" icon={<LuClipboardList size={24} />} />
@@ -46,6 +48,7 @@ export default function Home() {
           prefetch={false}
           className="w-full"
           href="?mode=create"
+          onNavigate={() => setModalNaturallyOpened(true)}
         >
           <LuPlus size={24} />
         </ButtonLink>

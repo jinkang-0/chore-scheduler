@@ -15,6 +15,9 @@
   --color-w8: #7f7f7f;
   --color-w5: #3e3e3e;
   --color-w4: #313131;
+  --color-w2: #292f39;
+
+  --color-primary: #35556a;
 
   --font-sans: var(--font-inter);
 }

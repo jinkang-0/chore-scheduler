@@ -1,3 +1,5 @@
+import { getPeople } from "@/api/db";
+
 export const intervalOptions = [
   { value: "daily", label: "Daily" },
   { value: "weekly", label: "Weekly" },
@@ -18,3 +20,11 @@ export const monthdayOptions = Array.from({ length: 28 }, (_, i) => ({
   value: (i + 1).toString(),
   label: `day ${i + 1}`
 }));
+
+export const getPeoplePoolOptions = async () => {
+  const users = await getPeople();
+  return users.map((user) => ({
+    value: user.id,
+    label: user.name
+  }));
+};
