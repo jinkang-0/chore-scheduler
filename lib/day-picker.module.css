@@ -1,0 +1,8 @@
+.root {
+  --rdp-accent-color: var(--color-foreground);
+}
+
+.selected > button {
+  border: 1px solid var(--color-w8);
+  background: rgba(0, 0, 0, 0.05);
+}

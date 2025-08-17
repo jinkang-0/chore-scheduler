@@ -10,7 +10,8 @@ function getSelectStyles<T, M extends boolean>(): StylesConfig<T, M> {
       backgroundColor: "var(--color-w5)",
       border: "none",
       borderColor: "transparent",
-      boxShadow: "none"
+      boxShadow: "none",
+      cursor: "pointer"
     }),
     singleValue: (base) => ({
       ...base,
@@ -38,7 +39,8 @@ function getSelectStyles<T, M extends boolean>(): StylesConfig<T, M> {
       color: "var(--color-w11)",
       "&:hover": {
         backgroundColor: "rgba(255, 255, 255, 0.05)"
-      }
+      },
+      cursor: "pointer"
     }),
     indicatorSeparator: (base) => ({
       ...base

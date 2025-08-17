@@ -7,14 +7,19 @@ import { useAppState } from "@/context/app-state";
 import { LuClipboardList, LuPlus, LuUser } from "react-icons/lu";
 import { useSearchParams } from "next/navigation";
 import CreateForm from "@/components/chore-view/create-form";
-import { HomeDialogProvider, useHomeDialog } from "@/context/home-dialog";
+import { useHomeDialog } from "@/context/home-dialog";
+import MobileDialogTransformer from "@/components/chore-view/mobile-dialog-transformer";
 
 function ViewDecider() {
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode");
 
   if (mode === "create") {
-    return <CreateForm />;
+    return (
+      <MobileDialogTransformer>
+        <CreateForm />
+      </MobileDialogTransformer>
+    );
   } else if (mode === "update") {
     return <div>Update existing chore</div>;
   } else if (mode === "view") {
@@ -54,7 +59,7 @@ export default function Home() {
         </ButtonLink>
       </div>
       <div className="hidden md:block md:col-span-1" />
-      <div className="hidden md:block md:col-span-5">
+      <div className="fixed md:static md:col-span-5">
         <ViewDecider />
       </div>
     </main>
