@@ -1,9 +1,9 @@
-import { useAppState } from "@/context/app-state";
+import { useChoreState } from "@/context/chore-state";
 import { formatDate } from "@/lib/utils";
 import { useMemo } from "react";
 
 export default function ChoreCard({ choreId }: { choreId: string }) {
-  const { choreMap } = useAppState();
+  const { choreMap } = useChoreState();
   const chore = useMemo(() => choreMap?.[choreId], [choreMap, choreId]);
 
   if (!chore) {

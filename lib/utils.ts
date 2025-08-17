@@ -17,10 +17,25 @@ export function isEmoji(str: string): boolean {
   return /^[\p{Extended_Pictographic}]{1}$/u.test(str);
 }
 
+/**
+ * Formats a date to a short date string.
+ * @example formatDate(new Date("2023-01-01")) => "Jan 1, 2023"
+ */
 export function formatDate(date: Date): string {
   return new Date(date).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric"
   });
+}
+
+/**
+ * Shuffles an array using the Fisher-Yates (Knuth) algorithm.
+ */
+export function shuffle<T>(array: T[]): T[] {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
 }

@@ -1,10 +1,10 @@
 import { getPeople } from "@/api/db";
 
 export const intervalOptions = [
-  { value: "daily", label: "Daily" },
-  { value: "weekly", label: "Weekly" },
-  { value: "monthly", label: "Monthly" }
-];
+  { value: "DAILY", label: "Daily" },
+  { value: "WEEKLY", label: "Weekly" },
+  { value: "MONTHLY", label: "Monthly" }
+] as const;
 
 export const getPeoplePoolOptions = async () => {
   const users = await getPeople();

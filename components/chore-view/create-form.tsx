@@ -16,6 +16,7 @@ import { Controller, FieldValues, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { DayPicker, DayPickerDropdown } from "../ui/day-picker";
+import { createChore } from "@/api/db";
 
 const schema = z
   .object({
@@ -82,10 +83,19 @@ export default function CreateForm() {
 
   const handleCreate = useCallback(
     (values: FieldValues) => {
-      console.log(values);
-      closeModal();
+      createChore({
+        title: values.title,
+        interval: values.interval,
+        dueDate: values.dueDate,
+        peoplePool: values.peoplePool,
+        assignTo: values.assignTo,
+        emoji: values.emoji
+      });
+
+      router.replace("/");
+      setModalNaturallyOpened(false);
     },
-    [closeModal]
+    [closeModal, router]
   );
 
   return (
@@ -169,10 +179,10 @@ export default function CreateForm() {
           </div>
 
           {/* due date select */}
-          <div className="ml-auto flex gap-4 items-center">
+          <div className="ml-auto flex gap-2 md:gap-4 items-center flex-wrap">
             <div className="flex gap-2 items-center text-w10">
               <LuClock size={24} />
-              <p>due on</p>
+              <p>first due on</p>
             </div>
             <Controller
               control={control}
