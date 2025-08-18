@@ -1,6 +1,6 @@
 "use client";
 
-import { ChoreWithQueue } from "@/lib/types";
+import { ChoreWithQueue } from "@/types/types";
 import { createContext, useContext } from "react";
 
 interface ChoreStateContextValue {

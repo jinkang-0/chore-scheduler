@@ -3,7 +3,7 @@
 import { shuffle } from "@/lib/utils";
 import { db } from "./internal";
 import { choresTable, choreUserTable } from "./schema";
-import { ChoreInterval } from "@/lib/types";
+import { ChoreInterval } from "@/types/types";
 import { revalidatePath } from "next/cache";
 import { monthdayOptions, weekdayOptions } from "@/data/dropdown";
 

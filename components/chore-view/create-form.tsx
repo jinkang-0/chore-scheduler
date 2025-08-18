@@ -14,7 +14,7 @@ import {
 } from "@/data/dropdown";
 import { CustomSelect, CustomSelectAsync } from "../ui/select";
 import { LuCalendar, LuClock, LuPlus } from "react-icons/lu";
-import { ChoreInterval, DropdownOption } from "@/lib/types";
+import { ChoreInterval, DropdownOption } from "@/types/types";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

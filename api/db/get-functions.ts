@@ -8,7 +8,7 @@ import {
   userTable
 } from "./schema";
 import { db } from "./internal";
-import { ChoreWithQueue } from "@/lib/types";
+import { ChoreWithQueue } from "@/types/types";
 
 /**
  * Get all chores from the database.

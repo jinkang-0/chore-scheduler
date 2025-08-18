@@ -1,7 +1,7 @@
 import { getChores } from "@/api/db";
 import { ChoreStateProvider } from "@/context/chore-state";
 import { HomeDialogProvider } from "@/context/home-dialog";
-import { ChoreWithQueue } from "@/lib/types";
+import { ChoreWithQueue } from "@/types/types";
 
 export default async function HomeLayout({
   children

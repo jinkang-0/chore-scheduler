@@ -3,7 +3,7 @@
 import { eq, sql } from "drizzle-orm";
 import { db } from "./internal";
 import { choresTable, choreUserTable, userTable } from "./schema";
-import { ChoreWithQueue } from "@/lib/types";
+import { ChoreWithQueue } from "@/types/types";
 import { revalidateTag } from "next/cache";
 
 export async function markChoreAsDone(choreId: string) {
