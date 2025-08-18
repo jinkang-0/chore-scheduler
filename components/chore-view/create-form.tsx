@@ -10,7 +10,6 @@ import { getPeoplePoolOptions, intervalOptions } from "@/data/dropdown";
 import { CustomSelect, CustomSelectAsync } from "../ui/select";
 import { LuClock, LuPlus } from "react-icons/lu";
 import { DropdownOption } from "@/lib/types";
-import { useHomeDialog } from "@/context/home-dialog";
 import { useRouter } from "next/navigation";
 import { Controller, FieldValues, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,9 +36,6 @@ const schema = z
   });
 
 export default function CreateForm() {
-  // context
-  const { modalNaturallyOpened, setModalNaturallyOpened } = useHomeDialog();
-
   // states
   const [emoji, setEmoji] = useState("🚀");
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -68,18 +64,9 @@ export default function CreateForm() {
     setPickerOpen((prev) => !prev);
   }, []);
 
-  const closeModal = useCallback(() => {
-    if (modalNaturallyOpened) {
-      router.back();
-      setModalNaturallyOpened(false);
-    } else {
-      router.replace("/");
-    }
-  }, [router, modalNaturallyOpened, setModalNaturallyOpened]);
-
   const handleCancel = useCallback(() => {
-    closeModal();
-  }, [closeModal]);
+    router.replace("/");
+  }, [router]);
 
   const handleCreate = useCallback(
     (values: FieldValues) => {
@@ -93,9 +80,8 @@ export default function CreateForm() {
       });
 
       router.replace("/");
-      setModalNaturallyOpened(false);
     },
-    [closeModal, router]
+    [router]
   );
 
   return (
@@ -265,7 +251,7 @@ export default function CreateForm() {
         </div>
 
         {/* buttons */}
-        <div className="flex justify-between items-center mt-auto">
+        <div className="flex justify-between items-center mt-auto pt-12">
           <Button variant="ghost" onClick={handleCancel} type="button">
             <p className="text-w11">cancel</p>
           </Button>

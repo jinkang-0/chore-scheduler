@@ -20,9 +20,9 @@ const buttonStyles = cva(
     variants: {
       variant: {
         glass: "p-4 bg-white/5 hover:bg-white/8 transition-colors",
-        primary: "px-4 py-2 bg-primary hover:brightness-105 transition-colors",
+        primary: "px-4 py-2 bg-primary hover:brightness-105 transition-all",
         ghost:
-          "p-2 after:bg-white/5 after:content-[''] after:absolute relative after:top-1/2 after:left-1/2 after:p-4 after:w-full after:h-full after:invisible hover:after:visible after:-translate-1/2 after:rounded-lg"
+          "p-2 after:bg-white/5 after:content-[''] after:absolute relative after:top-1/2 after:left-1/2 after:p-4 after:w-full after:h-full after:opacity-0 hover:after:opacity-100 after:transition-opacity after:-translate-1/2 after:rounded-[inherit]"
       }
     }
   }
