@@ -9,6 +9,7 @@ import CreateForm from "@/components/chore-view/create-form";
 import MobileDialogTransformer from "@/components/chore-view/mobile-dialog-transformer";
 import { ButtonLink } from "@/components/ui/button";
 import ChoreDetails from "@/components/chore-view/chore-details";
+import { formatDateShort } from "@/lib/utils";
 
 function ViewDecider() {
   const searchParams = useSearchParams();
@@ -35,6 +36,38 @@ function ViewDecider() {
 
 export default function Home() {
   const { choreMap } = useChoreState();
+  const allChores = Object.keys(choreMap || {});
+
+  const overdueChores: string[] = [];
+  const futureChores: string[] = [];
+
+  // filter chores
+  allChores.forEach((choreId) => {
+    const chore = choreMap[choreId];
+    if (!chore) return;
+
+    const isOverdue = new Date(chore.due_date) < new Date();
+    if (isOverdue) {
+      overdueChores.push(choreId);
+    } else {
+      futureChores.push(choreId);
+    }
+  });
+
+  // group future chores
+  const groupedChores: Record<string, string[]> = {};
+  futureChores.forEach((choreId) => {
+    const chore = choreMap[choreId];
+    const dueDate = new Date(chore.due_date).toLocaleDateString();
+    if (!groupedChores[dueDate]) {
+      groupedChores[dueDate] = [];
+    }
+    groupedChores[dueDate].push(choreId);
+  });
+
+  const sortedDates = Object.keys(groupedChores).sort((a, b) => {
+    return new Date(a).getTime() - new Date(b).getTime();
+  });
 
   return (
     <>
@@ -48,12 +81,25 @@ export default function Home() {
             <Tab href="/preferences" icon={<LuUser size={24} />} />
           </div>
           <div className="flex-1 pb-40 flex flex-col gap-2">
-            <h2 className="text-foreground text-3xl font-semibold mb-1">
-              This week
-            </h2>
-            {Object.keys(choreMap || {}).map((choreId) => (
-              <ChoreCard key={choreId} choreId={choreId} />
-            ))}
+            {overdueChores.length > 0 && (
+              <div className="flex flex-col gap-2 mb-4">
+                <h2 className="text-xl font-semibold">Past due</h2>
+                {overdueChores.map((choreId) => (
+                  <ChoreCard key={choreId} choreId={choreId} overdue />
+                ))}
+              </div>
+            )}
+            {sortedDates.length > 0 &&
+              sortedDates.map((date) => (
+                <div key={date} className="flex flex-col gap-2 mb-4">
+                  <h2 className="text-xl font-semibold">
+                    {formatDateShort(date)}
+                  </h2>
+                  {groupedChores[date].map((choreId) => (
+                    <ChoreCard key={choreId} choreId={choreId} />
+                  ))}
+                </div>
+              ))}
           </div>
           <div className="fixed grid grid-cols-10 left-1/2 -translate-x-1/2 bottom-6 md:bottom-16 pt-4 w-full px-6 sm:px-16 z-1 bg-background md:max-w-[1200px]">
             <div className="col-span-10 md:col-span-4">

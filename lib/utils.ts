@@ -21,9 +21,22 @@ export function isEmoji(str: string): boolean {
  * Formats a date to a short date string.
  * @example formatDate(new Date("2023-01-01")) => "Jan 1, 2023"
  */
-export function formatDate(date: Date): string {
-  return new Date(date).toLocaleDateString("en-US", {
+export function formatDate(date: Date | string): string {
+  const d = new Date(date);
+  return d.toLocaleDateString("en-US", {
     year: "numeric",
+    month: "short",
+    day: "numeric"
+  });
+}
+
+/**
+ * Formats a date to a short date string without the year.
+ * @example formatDateShort(new Date("2023-01-01")) => "Jan 1"
+ */
+export function formatDateShort(date: Date | string): string {
+  const d = new Date(date);
+  return d.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric"
   });

@@ -18,7 +18,13 @@ const cardStyles = cva(
   }
 );
 
-export default function ChoreCard({ choreId }: { choreId: string }) {
+export default function ChoreCard({
+  choreId,
+  overdue
+}: {
+  choreId: string;
+  overdue?: boolean;
+}) {
   const { choreMap } = useChoreState();
   const chore = useMemo(() => choreMap?.[choreId], [choreMap, choreId]);
   const searchParams = useSearchParams();
@@ -43,9 +49,18 @@ export default function ChoreCard({ choreId }: { choreId: string }) {
         <p className="text-xl">{chore.emoji}</p>
       </div>
       <div>
-        <p className="text-lg text-w11">Due {formatDate(chore.due_date)}</p>
+        {overdue && (
+          <p className="text-lg text-w11">Due {formatDate(chore.due_date)}</p>
+        )}
         <h3 className="text-xl font-medium">{chore.title}</h3>
-        <p className="text-lg text-w11">Assigned to {chore.queue[0]}</p>
+        <div className="flex gap-2 items-center">
+          <p className="text-lg text-w11">Assigned to {chore.queue[0]}</p>
+          {overdue && (
+            <div className="rounded-full px-2 py-0.5 border border-danger text-danger text-md">
+              <p>overdue</p>
+            </div>
+          )}
+        </div>
       </div>
     </button>
   );
