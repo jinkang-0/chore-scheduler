@@ -18,6 +18,14 @@ export function isEmoji(str: string): boolean {
 }
 
 /**
+ * Capitalize the first letter of a string.
+ */
+export function capitalize(str: string): string {
+  if (!str) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
  * Formats a date to a short date string.
  * @example formatDate(new Date("2023-01-01")) => "Jan 1, 2023"
  */

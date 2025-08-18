@@ -33,7 +33,9 @@ export const choresTable = pgTable("chores", {
   emoji: text().notNull(),
   interval: choreIntervalEnum().notNull(),
   due_date: timestamp({ withTimezone: true }).notNull(),
-  passIndex: integer().notNull().default(0)
+  passIndex: integer().notNull().default(0),
+  weekday: integer(),
+  monthday: integer()
 }).enableRLS();
 
 export const choreUserTable = pgTable(

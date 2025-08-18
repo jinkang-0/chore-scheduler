@@ -5,6 +5,7 @@ import { db } from "./internal";
 import { choresTable, choreUserTable } from "./schema";
 import { ChoreInterval } from "@/lib/types";
 import { revalidatePath } from "next/cache";
+import { monthdayOptions, weekdayOptions } from "@/data/dropdown";
 
 export async function createChore(chore: {
   title: string;
@@ -13,6 +14,8 @@ export async function createChore(chore: {
   peoplePool: string[];
   assignTo: string;
   emoji: string;
+  weekday: (typeof weekdayOptions)[number]["value"] | null;
+  monthday: (typeof monthdayOptions)[number]["value"] | null;
 }) {
   // ensure assignTo is in the people pool
   if (!chore.peoplePool.includes(chore.assignTo)) {
@@ -25,8 +28,6 @@ export async function createChore(chore: {
   );
   const pool = [chore.assignTo, ...peoplePoolWithoutAssignTo];
 
-  console.log("people pool", pool);
-
   // insert chore
   const [newChore] = await db
     .insert(choresTable)
@@ -35,7 +36,9 @@ export async function createChore(chore: {
       title: chore.title,
       interval: chore.interval,
       emoji: chore.emoji,
-      passIndex: 0
+      passIndex: 0,
+      weekday: chore.weekday ? Number(chore.weekday) : null,
+      monthday: chore.monthday ? Number(chore.monthday) : null
     })
     .returning();
 

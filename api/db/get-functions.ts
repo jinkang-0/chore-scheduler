@@ -8,6 +8,7 @@ import {
   userTable
 } from "./schema";
 import { db } from "./internal";
+import { ChoreWithQueue } from "@/lib/types";
 
 /**
  * Get all chores from the database.
@@ -24,7 +25,7 @@ export async function getChores() {
     GROUP BY c.id
   `;
 
-  return await db.execute(query);
+  return (await db.execute(query)) as unknown as ChoreWithQueue[];
 }
 
 /**

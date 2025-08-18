@@ -1,17 +1,22 @@
 "use client";
 
 import { DropdownMenu } from "radix-ui";
-import { useCallback, useEffect, useState } from "react";
-import { Button } from "../ui/button";
+import { useCallback, useState } from "react";
+import { Button, ButtonAsync } from "../ui/button";
 import CustomEmojiPicker from "../ui/emoji-picker";
 import { Emoji } from "frimousse";
 import Input from "../ui/input";
-import { getPeoplePoolOptions, intervalOptions } from "@/data/dropdown";
+import {
+  getPeoplePoolOptions,
+  intervalOptions,
+  monthdayOptions,
+  weekdayOptions
+} from "@/data/dropdown";
 import { CustomSelect, CustomSelectAsync } from "../ui/select";
-import { LuClock, LuPlus } from "react-icons/lu";
-import { DropdownOption } from "@/lib/types";
+import { LuCalendar, LuClock, LuPlus } from "react-icons/lu";
+import { ChoreInterval, DropdownOption } from "@/lib/types";
 import { useRouter } from "next/navigation";
-import { Controller, FieldValues, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { DayPicker, DayPickerDropdown } from "../ui/day-picker";
@@ -20,11 +25,26 @@ import { createChore } from "@/api/db";
 const schema = z
   .object({
     title: z.string().min(1, "Title is required"),
-    interval: z.enum(intervalOptions.map((opt) => opt.value)),
+    interval: z.enum(
+      intervalOptions.map((opt) => opt.value),
+      "Interval is required"
+    ),
     dueDate: z.date(),
     peoplePool: z.array(z.string()).min(1, "At least one person is required"),
     assignTo: z.string().min(1, "One person must be assigned at the start"),
-    emoji: z.string().regex(/^[\p{Extended_Pictographic}]{1}$/u)
+    emoji: z.string().regex(/^[\p{Extended_Pictographic}]{1}$/u),
+    weekday: z
+      .enum(
+        weekdayOptions.map((opt) => opt.value).filter((opt) => opt !== null)
+      )
+      .nullable()
+      .optional(),
+    monthday: z
+      .enum(
+        monthdayOptions.map((opt) => opt.value).filter((opt) => opt !== null)
+      )
+      .nullable()
+      .optional()
   })
   .superRefine((data, ctx) => {
     if (data.assignTo && !data.peoplePool.includes(data.assignTo))
@@ -39,6 +59,9 @@ export default function CreateForm() {
   // states
   const [emoji, setEmoji] = useState("🚀");
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [interval, setInterval] = useState<ChoreInterval | undefined>(
+    intervalOptions[0].value
+  );
   const [selectedPeople, setSelectedPeople] = useState<
     readonly DropdownOption[]
   >([]);
@@ -69,17 +92,19 @@ export default function CreateForm() {
   }, [router]);
 
   const handleCreate = useCallback(
-    (values: FieldValues) => {
-      createChore({
+    async (values: z.infer<typeof schema>) => {
+      await createChore({
         title: values.title,
         interval: values.interval,
         dueDate: values.dueDate,
         peoplePool: values.peoplePool,
         assignTo: values.assignTo,
-        emoji: values.emoji
+        emoji: values.emoji,
+        weekday: values.weekday || null,
+        monthday: values.monthday || null
+      }).then(() => {
+        router.replace("/", { scroll: false });
       });
-
-      router.replace("/");
     },
     [router]
   );
@@ -150,6 +175,7 @@ export default function CreateForm() {
                     isSearchable={false}
                     options={intervalOptions}
                     onChange={(v) => {
+                      setInterval(v?.value);
                       field.onChange(v?.value || null);
                     }}
                     isMulti={false}
@@ -192,6 +218,72 @@ export default function CreateForm() {
               )}
             />
           </div>
+
+          {/* reoccurrence select for weekly */}
+          {interval === "WEEKLY" && (
+            <div className="ml-auto flex gap-2 md:gap-4 items-center flex-wrap">
+              <div className="flex gap-2 items-center text-w10">
+                <LuCalendar size={24} />
+                <p>reoccur on</p>
+              </div>
+              <Controller
+                control={control}
+                name="weekday"
+                render={({ field, fieldState }) => (
+                  <>
+                    <CustomSelect
+                      instanceId="weekday"
+                      isSearchable={false}
+                      options={weekdayOptions}
+                      className="min-w-40"
+                      onChange={(v) => {
+                        field.onChange(v?.value || null);
+                      }}
+                      isMulti={false}
+                    />
+                    {fieldState.error && (
+                      <p className="text-red-500 text-sm">
+                        {fieldState.error.message}
+                      </p>
+                    )}
+                  </>
+                )}
+              />
+            </div>
+          )}
+
+          {/* reoccurrence select for monthly */}
+          {interval === "MONTHLY" && (
+            <div className="ml-auto flex gap-2 md:gap-4 items-center flex-wrap">
+              <div className="flex gap-2 items-center text-w10">
+                <LuCalendar size={24} />
+                <p>reoccur on</p>
+              </div>
+              <Controller
+                control={control}
+                name="monthday"
+                render={({ field, fieldState }) => (
+                  <>
+                    <CustomSelect
+                      instanceId="monthday"
+                      isSearchable={false}
+                      options={monthdayOptions}
+                      className="min-w-40"
+                      onChange={(v) => {
+                        field.onChange(v?.value || null);
+                      }}
+                      isMulti={false}
+                    />
+                    {fieldState.error && (
+                      <p className="text-red-500 text-sm">
+                        {fieldState.error.message}
+                      </p>
+                    )}
+                  </>
+                )}
+              />
+            </div>
+          )}
         </div>
 
         {/* people pool */}
@@ -255,7 +347,11 @@ export default function CreateForm() {
           <Button variant="ghost" onClick={handleCancel} type="button">
             <p className="text-w11">cancel</p>
           </Button>
-          <Button variant="primary" type="submit">
+          <Button
+            variant="primary"
+            type="submit"
+            disabled={formState.isSubmitting}
+          >
             <LuPlus size={24} />
             Create
           </Button>

@@ -1,9 +1,13 @@
 "use client";
 
 import { useChoreState } from "@/context/chore-state";
-import { useSearchParams } from "next/navigation";
-import { LuCheck, LuRepeat, LuUser } from "react-icons/lu";
+import { redirect, useSearchParams } from "next/navigation";
+import { LuCalendar, LuCheck, LuRepeat, LuUser } from "react-icons/lu";
 import { Button } from "../ui/button";
+import { useCallback, useMemo } from "react";
+import { markChoreAsDone } from "@/api/db/update-functions";
+import { capitalize } from "@/lib/utils";
+import { weekdays } from "@/data/datetime";
 
 export default function ChoreDetails() {
   const searchParams = useSearchParams();
@@ -12,10 +16,27 @@ export default function ChoreDetails() {
   const { choreMap } = useChoreState();
   const chore = choreMap[id || ""];
 
-  if (!id) return null;
+  const handleMarkDone = useCallback(() => {
+    if (!id) return;
+    markChoreAsDone(id);
+  }, []);
 
-  if (!chore) {
-    return <div>Chore not found</div>;
+  const reoccurrence = useMemo(() => {
+    if (!chore) return null;
+
+    if (chore.interval === "WEEKLY")
+      return chore.weekday && chore.weekday >= 0 && chore.weekday <= 6
+        ? weekdays[chore.weekday]
+        : null;
+
+    if (chore.interval === "MONTHLY")
+      return chore.monthday ? `day ${chore.monthday}` : null;
+
+    return null;
+  }, []);
+
+  if (!id || !chore) {
+    return redirect("/");
   }
 
   return (
@@ -28,6 +49,12 @@ export default function ChoreDetails() {
         <LuRepeat size={20} />
         <p>Repeats {chore.interval.toLowerCase()}</p>
       </div>
+      {reoccurrence && (
+        <div className="text-w11 flex gap-2 items-center">
+          <LuCalendar size={20} />
+          <p>Reoccurs on {reoccurrence}</p>
+        </div>
+      )}
       <div className="text-w11 flex gap-2 items-center">
         <LuUser size={20} />
         <p>Assigned to {chore.queue[0]}</p>
@@ -49,15 +76,19 @@ export default function ChoreDetails() {
 
       <div className="mt-auto flex flex-col md:flex-row gap-4 w-full pt-20">
         <div className="flex flex-col justify-end flex-1 text-w11">
-          <Button variant="ghost" className="justify-start w-fit">
+          <Button variant="ghost" className="justify-start w-fit text-left">
             skip to
           </Button>
-          <Button variant="ghost" className="justify-start w-fit">
+          <Button variant="ghost" className="justify-start w-fit text-left">
             come back to me
           </Button>
         </div>
         <div className="flex flex-col justify-end flex-1">
-          <Button variant="primary">
+          <Button
+            variant="primary"
+            onClick={handleMarkDone}
+            className="text-left"
+          >
             <LuCheck size={20} />
             <p>Mark as Done</p>
           </Button>
