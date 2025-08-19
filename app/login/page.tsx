@@ -10,7 +10,7 @@ function getErrorMessage(error: string | null): string {
     case "OAuthAccountNotLinked":
       return "This account is already linked to another user. Please use a different account.";
     case "AccessDenied":
-      return "Access denied. Please ensure you are using a berkeley.edu email.";
+      return "Access denied. Your email is not whitelisted.";
     default:
       return "An unexpected error occurred. Please try again.";
   }

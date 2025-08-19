@@ -1,8 +1,14 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "../db/internal";
-import { accountsTable, sessionsTable, userTable } from "../db/schema";
+import {
+  accountsTable,
+  sessionsTable,
+  userTable,
+  whitelistedUsers
+} from "../db/schema";
 import GoogleProvider from "next-auth/providers/google";
 import { AuthOptions, getServerSession } from "next-auth";
+import { eq } from "drizzle-orm";
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
   throw new Error(
@@ -26,8 +32,20 @@ export const authConfig: AuthOptions = {
     async signIn({ user }) {
       if (!user.email) return false;
 
-      const domain = user.email.split("@")[1].toLowerCase();
-      return domain === "berkeley.edu";
+      // check if the user's email is whitelisted
+      const [whitelistedUser] = await db
+        .select()
+        .from(whitelistedUsers)
+        .where(eq(whitelistedUsers.email, user.email));
+
+      if (!whitelistedUser) {
+        return false;
+      }
+
+      user.name = whitelistedUser.name || user.name;
+      user.id = whitelistedUser.id || user.id;
+
+      return true;
     },
 
     async session({ session, user }) {

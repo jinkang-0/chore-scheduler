@@ -6,11 +6,13 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db-push": "pnpm exec drizzle-kit push --config=drizzle-push.config.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.10.0",
     "@hookform/resolvers": "^5.2.1",
+    "@react-email/components": "^0.5.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.44.4",
@@ -18,6 +20,7 @@
     "frimousse": "^0.3.0",
     "next": "15.4.6",
     "next-auth": "^4.24.11",
+    "nodemailer": "^6.8.0",
     "postgres": "^3.4.7",
     "radix-ui": "^1.4.3",
     "react": "19.1.0",
@@ -33,6 +36,7 @@
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/nodemailer": "^7.0.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "drizzle-kit": "^0.31.4",

@@ -22,12 +22,30 @@ export const choreLogTypeEnum = pgEnum("chore_log_type", [
   "ERROR"
 ]);
 
+// used for whitelisting users for login
+// also used to inform people pool selection if account is not yet created
+export const whitelistedUsers = pgTable("whitelisted_users", {
+  id: uuid().defaultRandom().primaryKey(),
+  email: text().notNull().unique(),
+  name: text().notNull()
+});
+
 export const userTable = pgTable("user", {
   id: uuid().defaultRandom().primaryKey(),
   email: text().notNull().unique(),
-  name: text().notNull(),
+  name: text().notNull(), // only used to set initial username in profile
+  // unused, but required by next-auth
   emailVerified: timestamp({ withTimezone: true }),
   image: text()
+});
+
+// store preferences for notifications and other user settings
+export const profileTable = pgTable("profile", {
+  userId: uuid()
+    .notNull()
+    .references(() => userTable.id, { onDelete: "cascade" }),
+  name: text().notNull(),
+  email_notifications: boolean().notNull().default(true)
 });
 
 export const accountsTable = pgTable(

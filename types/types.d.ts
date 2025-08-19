@@ -12,6 +12,12 @@ type ChoreUser = typeof choreUserTable.$inferSelect;
 type ChoreInterval = Chore["interval"];
 type ChoreLogType = ChoreLog["type"];
 
+interface ChoreMinimal {
+  id: string;
+  title: string;
+  emoji: string;
+}
+
 interface ChoreWithQueue extends Chore {
   queue: string[];
 }
