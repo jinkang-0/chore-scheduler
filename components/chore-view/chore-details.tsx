@@ -5,9 +5,9 @@ import { redirect, useSearchParams } from "next/navigation";
 import {
   LuCalendar,
   LuCheck,
-  LuPen,
   LuPencil,
   LuRepeat,
+  LuThumbsUp,
   LuUser,
   LuUsers
 } from "react-icons/lu";
@@ -16,6 +16,8 @@ import { useCallback, useMemo } from "react";
 import { markChoreAsDone } from "@/api/db/update-functions";
 import { weekdays } from "@/data/datetime";
 import { useSession } from "next-auth/react";
+import CustomDialog from "../ui/dialog";
+import UpdateDueDateForm from "./update-due-date-form";
 
 export default function ChoreDetails() {
   const { data: session } = useSession();
@@ -24,14 +26,14 @@ export default function ChoreDetails() {
   const user = session.user;
 
   const searchParams = useSearchParams();
-  const id = searchParams.get("id");
+  const choreId = searchParams.get("id");
 
   const { choreMap } = useChoreState();
-  const chore = choreMap[id || ""];
+  const chore = choreMap[choreId || ""];
 
   const handleMarkDone = useCallback(() => {
-    if (!id) return;
-    markChoreAsDone(id);
+    if (!choreId) return;
+    markChoreAsDone(choreId);
   }, []);
 
   const reoccurrence = useMemo(() => {
@@ -48,7 +50,7 @@ export default function ChoreDetails() {
     return null;
   }, []);
 
-  if (!id || !chore) {
+  if (!choreId || !chore) {
     return redirect("/");
   }
 
@@ -101,9 +103,7 @@ export default function ChoreDetails() {
 
       <div className="mt-auto flex flex-col md:flex-row gap-4 w-full pt-20">
         <div className="flex flex-col justify-end flex-1 text-w11">
-          <Button variant="ghost" className="justify-start w-fit text-left">
-            change due date
-          </Button>
+          <UpdateDueDateForm choreId={choreId} />
           {user.whitelist_id === chore.queue[0].id && (
             <Button variant="ghost" className="justify-start w-fit text-left">
               come back to me
@@ -128,8 +128,8 @@ export default function ChoreDetails() {
                 className="text-left"
                 onClick={handleMarkDone}
               >
-                <LuCheck size={20} />
-                <p>Complete for {chore.queue[0].name}</p>
+                <LuThumbsUp size={20} />
+                <p>I did it myself</p>
               </Button>
             )}
         </div>

@@ -10,10 +10,15 @@ import {
   whitelistedUsers
 } from "./schema";
 import { ChoreWithQueue } from "@/types/types";
-import { revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authConfig } from "../auth/config";
 
+/**
+ * Mark the chore as done by updating its due date and rotating the queue.
+ * A log entry is created for the action.
+ * The authenticated user is placed at the end of the queue.
+ */
 export async function markChoreAsDone(choreId: string) {
   const session = await getServerSession(authConfig);
   if (!session?.user?.id) {
@@ -84,6 +89,8 @@ export async function markChoreAsDone(choreId: string) {
     // we're afforded the ability to not check if the monthday is valid
     // because the monthday is within the range of 1-28
     // thus guaranteeing incrementing the month will not overflow to the month after
+
+    revalidatePath("/");
   }
 
   await db.transaction(async (tx) => {
@@ -113,9 +120,12 @@ export async function markChoreAsDone(choreId: string) {
     });
   });
 
-  revalidateTag(choreId);
+  revalidatePath("/");
 }
 
+/**
+ * Update the username of the authenticated user.
+ */
 export async function updateUsername(name: string) {
   const session = await getServerSession(authConfig);
   if (!session?.user?.id) {
@@ -127,9 +137,12 @@ export async function updateUsername(name: string) {
     .set({ name })
     .where(eq(whitelistedUsers.id, session.user.whitelist_id));
 
-  revalidateTag(session.user.whitelist_id);
+  revalidatePath("/");
 }
 
+/**
+ * Set the user as having completed the onboarding process.
+ */
 export async function setOnboarded() {
   const session = await getServerSession(authConfig);
   if (!session?.user?.id) {
@@ -141,5 +154,22 @@ export async function setOnboarded() {
     .set({ is_onboarded: true })
     .where(eq(userTable.id, session.user.id));
 
-  revalidateTag(session.user.id);
+  revalidatePath("/");
+}
+
+/**
+ * Update the due date of a chore.
+ */
+export async function updateChoreDueDate(choreId: string, dueDate: Date) {
+  const session = await getServerSession(authConfig);
+  if (!session?.user?.id) {
+    throw new Error("User not authenticated");
+  }
+
+  await db
+    .update(choresTable)
+    .set({ due_date: dueDate })
+    .where(eq(choresTable.id, choreId));
+
+  revalidatePath("/");
 }
