@@ -3,6 +3,7 @@
 import { eq, sql } from "drizzle-orm";
 import { db } from "./internal";
 import {
+  choreLogTable,
   choresTable,
   choreUserTable,
   userTable,
@@ -14,6 +15,11 @@ import { getServerSession } from "next-auth";
 import { authConfig } from "../auth/config";
 
 export async function markChoreAsDone(choreId: string) {
+  const session = await getServerSession(authConfig);
+  if (!session?.user?.id) {
+    throw new Error("User not authenticated");
+  }
+
   const query = sql`
       WITH n AS (
         SELECT * FROM ${choreUserTable} AS cu
@@ -80,20 +86,31 @@ export async function markChoreAsDone(choreId: string) {
     // thus guaranteeing incrementing the month will not overflow to the month after
   }
 
-  // rotate queue
-  const assignedTo = chore.queue[0];
+  await db.transaction(async (tx) => {
+    // rotate queue
+    await tx
+      .delete(choreUserTable)
+      .where(eq(choreUserTable.user_id, session.user.whitelist_id));
 
-  await db.delete(choreUserTable).where(eq(choreUserTable.user_id, assignedTo));
-  await db.insert(choreUserTable).values({
-    chore_id: chore.id,
-    user_id: assignedTo,
-    time_enqueued: new Date()
-  });
+    await tx.insert(choreUserTable).values({
+      chore_id: chore.id,
+      user_id: session.user.whitelist_id,
+      time_enqueued: new Date()
+    });
 
-  // update chore's due date and pass index
-  await db.update(choresTable).set({
-    due_date: nextDueDate,
-    passIndex: 0
+    // update chore's due date and pass index
+    await tx.update(choresTable).set({
+      due_date: nextDueDate,
+      passIndex: 0
+    });
+
+    // add log
+    await tx.insert(choreLogTable).values({
+      chore_id: chore.id,
+      user_id: session.user.whitelist_id,
+      type: "SUCCESS",
+      message: `Completed by ${session.user.name}`
+    });
   });
 
   revalidateTag(choreId);

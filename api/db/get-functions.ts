@@ -19,7 +19,7 @@ export async function getChores() {
       SELECT * FROM ${choreUserTable} AS cu
       JOIN ${whitelistedUsers} AS u ON cu.user_id = u.id
     )
-    SELECT c.*, array_agg(n.name ORDER BY n.time_enqueued) AS queue
+    SELECT c.*, json_agg(json_build_object('name', n.name, 'id', n.id) ORDER BY n.time_enqueued) AS queue
     FROM ${choresTable} AS c
     LEFT JOIN n ON c.id = n.chore_id
     GROUP BY c.id

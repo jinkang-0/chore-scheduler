@@ -54,7 +54,7 @@ export default function ChoreCard({
         )}
         <h3 className="text-xl font-medium">{chore.title}</h3>
         <div className="flex gap-2 items-center">
-          <p className="text-lg text-w11">Assigned to {chore.queue[0]}</p>
+          <p className="text-lg text-w11">Assigned to {chore.queue[0].name}</p>
           {overdue && (
             <div className="rounded-full px-2 py-0.5 border border-danger text-danger text-md">
               <p>overdue</p>

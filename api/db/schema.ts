@@ -62,7 +62,10 @@ export const choreLogTable = pgTable("chore_log", {
   chore_id: uuid()
     .notNull()
     .references(() => choresTable.id),
-  timestamp: timestamp({ withTimezone: true }).notNull(),
+  user_id: uuid()
+    .notNull()
+    .references(() => whitelistedUsers.id),
+  timestamp: timestamp({ withTimezone: true }).notNull().defaultNow(),
   message: text().notNull(),
   type: choreLogTypeEnum().notNull()
 }).enableRLS();

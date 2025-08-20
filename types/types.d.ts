@@ -12,6 +12,11 @@ type ChoreUser = typeof choreUserTable.$inferSelect;
 type ChoreInterval = Chore["interval"];
 type ChoreLogType = ChoreLog["type"];
 
+interface UserMinimal {
+  id: string;
+  name: string;
+}
+
 interface ChoreMinimal {
   id: string;
   title: string;
@@ -19,7 +24,7 @@ interface ChoreMinimal {
 }
 
 interface ChoreWithQueue extends Chore {
-  queue: string[];
+  queue: UserMinimal[];
 }
 
 type ChoreViewIntent = "create" | "update" | "view";
