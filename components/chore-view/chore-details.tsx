@@ -2,13 +2,7 @@
 
 import { useChoreState } from "@/context/chore-state";
 import { redirect, useSearchParams } from "next/navigation";
-import {
-  LuCalendar,
-  LuCheck,
-  LuPointer,
-  LuRepeat,
-  LuUser
-} from "react-icons/lu";
+import { LuCalendar, LuCheck, LuRepeat, LuUser } from "react-icons/lu";
 import { Button } from "../ui/button";
 import { useCallback, useMemo } from "react";
 import { markChoreAsDone } from "@/api/db/update-functions";
