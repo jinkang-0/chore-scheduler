@@ -1,3 +1,5 @@
+"use client";
+
 import { ButtonVariant } from "@/types/types";
 import { cva } from "class-variance-authority";
 import Link from "next/link";

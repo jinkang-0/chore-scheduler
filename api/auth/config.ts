@@ -9,6 +9,7 @@ import {
 import GoogleProvider from "next-auth/providers/google";
 import { AuthOptions, getServerSession } from "next-auth";
 import { eq } from "drizzle-orm";
+import { Adapter } from "next-auth/adapters";
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
   throw new Error(
@@ -18,10 +19,11 @@ if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
 
 export const authConfig: AuthOptions = {
   adapter: DrizzleAdapter(db, {
-    usersTable: userTable,
-    accountsTable: accountsTable,
-    sessionsTable: sessionsTable
-  }),
+    // typecasting to avoid type complaints on RLS
+    usersTable: userTable as any,
+    accountsTable: accountsTable as any,
+    sessionsTable: sessionsTable as any
+  }) as Adapter,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -42,9 +44,6 @@ export const authConfig: AuthOptions = {
         return false;
       }
 
-      user.name = whitelistedUser.name || user.name;
-      user.id = whitelistedUser.id || user.id;
-
       return true;
     },
 
@@ -52,7 +51,7 @@ export const authConfig: AuthOptions = {
       if (!session) return session;
 
       if (user) {
-        session.user.id = user.id;
+        session.user = user;
       }
 
       return session;

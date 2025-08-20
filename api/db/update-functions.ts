@@ -2,15 +2,22 @@
 
 import { eq, sql } from "drizzle-orm";
 import { db } from "./internal";
-import { choresTable, choreUserTable, userTable } from "./schema";
+import {
+  choresTable,
+  choreUserTable,
+  userTable,
+  whitelistedUsers
+} from "./schema";
 import { ChoreWithQueue } from "@/types/types";
 import { revalidateTag } from "next/cache";
+import { getServerSession } from "next-auth";
+import { authConfig } from "../auth/config";
 
 export async function markChoreAsDone(choreId: string) {
   const query = sql`
       WITH n AS (
         SELECT * FROM ${choreUserTable} AS cu
-        JOIN ${userTable} AS u ON cu.user_id = u.id
+        JOIN ${whitelistedUsers} AS u ON cu.user_id = u.id
       )
       SELECT c.*, array_agg(n.id ORDER BY n.time_enqueued) AS queue
       FROM ${choresTable} AS c
@@ -90,4 +97,32 @@ export async function markChoreAsDone(choreId: string) {
   });
 
   revalidateTag(choreId);
+}
+
+export async function updateUsername(name: string) {
+  const session = await getServerSession(authConfig);
+  if (!session?.user?.id) {
+    throw new Error("User not authenticated");
+  }
+
+  await db
+    .update(whitelistedUsers)
+    .set({ name })
+    .where(eq(whitelistedUsers.id, session.user.whitelist_id));
+
+  revalidateTag(session.user.whitelist_id);
+}
+
+export async function setOnboarded() {
+  const session = await getServerSession(authConfig);
+  if (!session?.user?.id) {
+    throw new Error("User not authenticated");
+  }
+
+  await db
+    .update(userTable)
+    .set({ is_onboarded: true })
+    .where(eq(userTable.id, session.user.id));
+
+  revalidateTag(session.user.id);
 }

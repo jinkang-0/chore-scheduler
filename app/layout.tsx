@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { SessionProvider } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { authConfig } from "@/api/auth/config";
+import SessionProviderClient from "@/context/session";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -12,15 +16,19 @@ export const metadata: Metadata = {
   description: "A simple chore scheduling app"
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(authConfig);
+
   return (
     <html lang="en">
       <body className={`${inter.variable} antialiased w-full h-svh`}>
-        {children}
+        <SessionProviderClient session={session}>
+          {children}
+        </SessionProviderClient>
       </body>
     </html>
   );

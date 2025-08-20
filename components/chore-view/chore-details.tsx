@@ -2,14 +2,23 @@
 
 import { useChoreState } from "@/context/chore-state";
 import { redirect, useSearchParams } from "next/navigation";
-import { LuCalendar, LuCheck, LuRepeat, LuUser } from "react-icons/lu";
+import {
+  LuCalendar,
+  LuCheck,
+  LuPointer,
+  LuRepeat,
+  LuUser
+} from "react-icons/lu";
 import { Button } from "../ui/button";
 import { useCallback, useMemo } from "react";
 import { markChoreAsDone } from "@/api/db/update-functions";
-import { capitalize } from "@/lib/utils";
 import { weekdays } from "@/data/datetime";
+import { useSession } from "next-auth/react";
 
 export default function ChoreDetails() {
+  const { data } = useSession();
+  const user = data?.user;
+
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
 
@@ -84,14 +93,16 @@ export default function ChoreDetails() {
           </Button>
         </div>
         <div className="flex flex-col justify-end flex-1">
-          <Button
-            variant="primary"
-            onClick={handleMarkDone}
-            className="text-left"
-          >
-            <LuCheck size={20} />
-            <p>Mark as Done</p>
-          </Button>
+          {user?.id === chore.queue[0] && (
+            <Button
+              variant="primary"
+              onClick={handleMarkDone}
+              className="text-left"
+            >
+              <LuCheck size={20} />
+              <p>Mark as Done</p>
+            </Button>
+          )}
         </div>
       </div>
     </div>

@@ -111,7 +111,7 @@ export default function CreateForm() {
 
   return (
     <form
-      className="flex flex-col p-6 lg:p-8 rounded-lg bg-w4 w-full h-full gap-6"
+      className="flex flex-col p-6 lg:p-8 rounded-lg bg-w4 w-full h-full gap-6 overflow-y-auto"
       onSubmit={handleSubmit(handleCreate)}
     >
       {/* title and emoji */}

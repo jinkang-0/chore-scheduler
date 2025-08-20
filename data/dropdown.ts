@@ -1,4 +1,4 @@
-import { getPeople } from "@/api/db";
+import { getWhitelistedPeople } from "@/api/db";
 
 export const intervalOptions = [
   { value: "DAILY", label: "Daily" },
@@ -50,7 +50,7 @@ export const monthdayOptions = [
 ] as const;
 
 export const getPeoplePoolOptions = async () => {
-  const users = await getPeople();
+  const users = await getWhitelistedPeople();
   return users.map((user) => ({
     value: user.id,
     label: user.name

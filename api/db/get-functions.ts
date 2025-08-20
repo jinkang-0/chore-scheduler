@@ -5,7 +5,7 @@ import {
   choreLogTable,
   choresTable,
   choreUserTable,
-  userTable
+  whitelistedUsers
 } from "./schema";
 import { db } from "./internal";
 import { ChoreWithQueue } from "@/types/types";
@@ -17,7 +17,7 @@ export async function getChores() {
   const query = sql`
     WITH n AS (
       SELECT * FROM ${choreUserTable} AS cu
-      JOIN ${userTable} AS u ON cu.user_id = u.id
+      JOIN ${whitelistedUsers} AS u ON cu.user_id = u.id
     )
     SELECT c.*, array_agg(n.name ORDER BY n.time_enqueued) AS queue
     FROM ${choresTable} AS c
@@ -41,11 +41,11 @@ export async function getLogsForChore(choreId: string) {
 /**
  * Get all users from the database.
  */
-export async function getPeople() {
+export async function getWhitelistedPeople() {
   return await db
     .select({
-      id: userTable.id,
-      name: userTable.name
+      id: whitelistedUsers.id,
+      name: whitelistedUsers.name
     })
-    .from(userTable);
+    .from(whitelistedUsers);
 }
