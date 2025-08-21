@@ -9,11 +9,10 @@ interface ChoreStateContextValue {
 
 const ChoreStateContext = createContext<ChoreStateContextValue | null>(null);
 
-// hook to use app state context
 export const useChoreState = () => {
   const context = useContext(ChoreStateContext);
   if (!context) {
-    throw new Error("useAppState must be used within an AppStateProvider");
+    throw new Error("useChoreState must be used within a ChoreStateProvider");
   }
   return context;
 };

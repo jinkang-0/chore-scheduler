@@ -51,6 +51,22 @@ export function formatDateShort(date: Date | string): string {
 }
 
 /**
+ * Formats a timestamp to a human-readable string.
+ */
+export function formatLogTimestamp(timestamp: string): string {
+  const d = new Date(timestamp);
+  return d.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    second: "2-digit"
+  });
+}
+
+/**
  * Shuffles an array using the Fisher-Yates (Knuth) algorithm.
  */
 export function shuffle<T>(array: T[]): T[] {
@@ -59,4 +75,36 @@ export function shuffle<T>(array: T[]): T[] {
     [array[i], array[j]] = [array[j], array[i]];
   }
   return array;
+}
+
+/**
+ * Semantically join an array of strings with commas and "and".
+ */
+export function semanticJoin(arr: string[]): string {
+  if (arr.length === 0) return "";
+  if (arr.length === 1) return arr[0];
+  if (arr.length === 2) return `${arr[0]} and ${arr[1]}`;
+
+  const lastItem = arr.pop();
+  return `${arr.join(", ")}, and ${lastItem}`;
+}
+
+/**
+ * Checks if two arrays are equal in terms of content.
+ */
+export function arrayEquality<T>(a: T[], b: T[]): boolean {
+  if (a.length !== b.length) return false;
+
+  const setA = new Set(a);
+  const setB = new Set(b);
+
+  for (const item of setA) {
+    if (!setB.has(item)) return false;
+  }
+
+  for (const item of setB) {
+    if (!setA.has(item)) return false;
+  }
+
+  return true;
 }

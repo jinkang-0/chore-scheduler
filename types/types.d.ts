@@ -23,6 +23,18 @@ interface ChoreMinimal {
   emoji: string;
 }
 
+interface LogEntry {
+  id: string;
+  user_id: string | null;
+  timestamp: string;
+  message: string;
+  type: ChoreLogType;
+}
+
+interface ChoreWithLogs extends ChoreMinimal {
+  logs: LogEntry[];
+}
+
 interface ChoreWithQueue extends Chore {
   queue: UserMinimal[];
 }

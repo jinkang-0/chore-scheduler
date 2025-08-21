@@ -9,10 +9,11 @@ import {
   userTable,
   whitelistedUsers
 } from "./schema";
-import { ChoreWithQueue } from "@/types/types";
+import { ChoreLog, ChoreWithQueue } from "@/types/types";
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authConfig } from "../auth/config";
+import { arrayEquality, semanticJoin } from "@/lib/utils";
 
 /**
  * Helper function to get a chore with its queue by ID.
@@ -46,11 +47,7 @@ export async function markChoreAsDone(choreId: string) {
     throw new Error("User not authenticated");
   }
 
-  const [chore] = await db
-    .select()
-    .from(choresTable)
-    .where(eq(choresTable.id, choreId))
-    .limit(1);
+  const chore = await getChoreWithQueue(choreId);
 
   if (!chore) {
     throw new Error("Chore not found");
@@ -106,6 +103,36 @@ export async function markChoreAsDone(choreId: string) {
     revalidatePath("/");
   }
 
+  // determine logs to add
+  const logs: Omit<ChoreLog, "id">[] = [
+    {
+      chore_id: chore.id,
+      user_id: session.user.whitelist_id,
+      type: "INFO",
+      message: `Completed by ${session.user.name}`,
+      timestamp: new Date()
+    }
+  ];
+
+  // find user position in queue
+  const userIndex = chore.queue.findIndex(
+    (user) => user.id === session.user.whitelist_id
+  );
+  const nextUser = chore.queue[userIndex === 0 ? 1 : 0];
+  const assignedUser = chore.queue[chore.passIndex % chore.queue.length];
+  const userIsAssigned = session.user.whitelist_id === assignedUser.id;
+  const now = Date.now();
+
+  if (userIsAssigned) {
+    logs.push({
+      chore_id: chore.id,
+      user_id: nextUser.id,
+      type: "INFO",
+      message: `Assigned to ${nextUser.name}`,
+      timestamp: new Date(now + 1000)
+    });
+  }
+
   await db.transaction(async (tx) => {
     // rotate queue
     await tx
@@ -124,13 +151,7 @@ export async function markChoreAsDone(choreId: string) {
       passIndex: 0
     });
 
-    // add log
-    await tx.insert(choreLogTable).values({
-      chore_id: chore.id,
-      user_id: session.user.whitelist_id,
-      type: "SUCCESS",
-      message: `Completed by ${session.user.name}`
-    });
+    await tx.insert(choreLogTable).values(logs);
   });
 
   revalidatePath("/");
@@ -179,23 +200,6 @@ export async function setOnboarded() {
 }
 
 /**
- * Update the due date of a chore.
- */
-export async function updateChoreDueDate(choreId: string, dueDate: Date) {
-  const session = await getServerSession(authConfig);
-  if (!session?.user?.id) {
-    throw new Error("User not authenticated");
-  }
-
-  await db
-    .update(choresTable)
-    .set({ due_date: dueDate })
-    .where(eq(choresTable.id, choreId));
-
-  revalidatePath("/");
-}
-
-/**
  * Increment the pass index of a chore.
  */
 export async function incrementChorePassIndex(choreId: string) {
@@ -203,6 +207,15 @@ export async function incrementChorePassIndex(choreId: string) {
   if (!session?.user?.id) {
     throw new Error("User not authenticated");
   }
+
+  // check who will be next in queue
+  const chore = await getChoreWithQueue(choreId);
+  if (!chore || !chore.queue || chore.queue.length === 0) {
+    throw new Error("Chore not found");
+  }
+
+  const nextUser = chore.queue[(chore.passIndex + 1) % chore.queue.length];
+  const now = Date.now();
 
   await db.transaction(async (tx) => {
     // increment the pass index of the chore
@@ -212,12 +225,22 @@ export async function incrementChorePassIndex(choreId: string) {
       .where(eq(choresTable.id, choreId));
 
     // add log
-    await tx.insert(choreLogTable).values({
-      chore_id: choreId,
-      user_id: session.user.whitelist_id,
-      type: "INFO",
-      message: `${session.user.name} passed`
-    });
+    await tx.insert(choreLogTable).values([
+      {
+        chore_id: choreId,
+        user_id: session.user.whitelist_id,
+        type: "INFO",
+        message: `${session.user.name} passed`,
+        timestamp: new Date(now)
+      },
+      {
+        chore_id: choreId,
+        user_id: nextUser.id,
+        type: "INFO",
+        message: `Assigned to ${nextUser.name}`,
+        timestamp: new Date(now + 1000)
+      }
+    ]);
   });
 
   revalidatePath("/");
@@ -243,6 +266,32 @@ export async function updateChore(chore: {
   }
 
   const oldChore = await getChoreWithQueue(chore.id);
+
+  // find what changed
+  const changes: string[] = [];
+
+  if (chore.title !== oldChore.title) changes.push("title");
+  if (chore.emoji !== oldChore.emoji) changes.push("emoji");
+
+  const oldDueDate = new Date(oldChore.due_date).toLocaleDateString();
+  const newDueDate = new Date(chore.dueDate).toLocaleDateString();
+  if (oldDueDate !== newDueDate) changes.push("due date");
+
+  if (
+    chore.interval !== oldChore.interval ||
+    chore.monthday !== oldChore.monthday ||
+    chore.weekday !== oldChore.weekday
+  )
+    changes.push("interval");
+
+  if (
+    !arrayEquality(
+      chore.peoplePool,
+      oldChore.queue.map((u) => u.id)
+    )
+  ) {
+    changes.push("people pool");
+  }
 
   // find removed and newly added users (if any)
   const removedUsers = oldChore.queue
@@ -289,8 +338,11 @@ export async function updateChore(chore: {
     await tx.insert(choreLogTable).values({
       chore_id: chore.id,
       user_id: session.user.whitelist_id,
-      type: "INFO",
-      message: `Chore updated by ${session.user.name}`
+      type: "WARNING",
+      message:
+        changes.length > 0
+          ? `${session.user.name} changed the ${semanticJoin(changes)}`
+          : `${session.user.name} updated chore details`
     });
   });
 

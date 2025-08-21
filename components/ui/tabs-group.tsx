@@ -11,7 +11,7 @@ export default function TabsGroup() {
   const highlightedTab = useMemo(() => {
     if (pathname === "/preferences") return "preferences";
 
-    if (pathname === "/logs") return "logs";
+    if (pathname.startsWith("/logs")) return "logs";
 
     return "home";
   }, [pathname]);

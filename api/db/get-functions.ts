@@ -8,7 +8,7 @@ import {
   whitelistedUsers
 } from "./schema";
 import { db } from "./internal";
-import { ChoreWithQueue } from "@/types/types";
+import { ChoreWithLogs, ChoreWithQueue } from "@/types/types";
 
 /**
  * Get all chores from the database.
@@ -48,4 +48,28 @@ export async function getWhitelistedPeople() {
       name: whitelistedUsers.name
     })
     .from(whitelistedUsers);
+}
+
+/**
+ * Get all logs
+ */
+export async function getAllLogs() {
+  const query = sql`
+    SELECT
+      c.id,
+      c.title,
+      c.emoji,
+      json_agg(json_build_object(
+        'id', cl.id, 
+        'user_id', cl.user_id,
+        'timestamp', cl.timestamp,
+        'message', cl.message,
+        'type', cl.type
+      ) ORDER BY cl.timestamp DESC) AS logs
+    FROM ${choresTable} AS c
+    LEFT JOIN ${choreLogTable} AS cl ON c.id = cl.chore_id
+    GROUP BY c.id
+  `;
+
+  return (await db.execute(query)) as unknown as ChoreWithLogs[];
 }

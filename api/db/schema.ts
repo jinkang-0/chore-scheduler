@@ -17,7 +17,6 @@ export const choreIntervalEnum = pgEnum("chore_interval", [
 
 export const choreLogTypeEnum = pgEnum("chore_log_type", [
   "INFO",
-  "SUCCESS",
   "WARNING",
   "ERROR"
 ]);
