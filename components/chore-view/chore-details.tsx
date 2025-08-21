@@ -11,7 +11,7 @@ import {
   LuUser,
   LuUsers
 } from "react-icons/lu";
-import { Button, ButtonAsync, ButtonLink } from "../ui/button";
+import { ButtonAsync, ButtonLink } from "../ui/button";
 import { useCallback, useMemo } from "react";
 import {
   incrementChorePassIndex,
@@ -19,7 +19,6 @@ import {
 } from "@/api/db/update-functions";
 import { weekdays } from "@/data/datetime";
 import { useSession } from "next-auth/react";
-import UpdateDueDateForm from "./update-due-date-form";
 
 export default function ChoreDetails({ choreId }: { choreId: string }) {
   const { data: session } = useSession();
@@ -106,7 +105,6 @@ export default function ChoreDetails({ choreId }: { choreId: string }) {
 
       <div className="mt-auto flex flex-col md:flex-row gap-4 w-full pt-20">
         <div className="flex flex-col justify-end flex-1 text-w11">
-          <UpdateDueDateForm choreId={choreId} />
           {user.whitelist_id === chore.queue[assignedIndex].id && (
             <ButtonAsync
               variant="ghost"
