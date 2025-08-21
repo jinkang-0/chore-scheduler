@@ -2,7 +2,7 @@
 
 import { DropdownMenu } from "radix-ui";
 import { useCallback, useState } from "react";
-import { Button, ButtonAsync } from "../ui/button";
+import { Button } from "../ui/button";
 import CustomEmojiPicker from "../ui/emoji-picker";
 import { Emoji } from "frimousse";
 import Input from "../ui/input";

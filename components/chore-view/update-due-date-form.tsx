@@ -8,6 +8,7 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updateChoreDueDate } from "@/api/db";
 import CustomDialog from "../ui/dialog";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const schema = z.object({
   dueDate: z.date().min(new Date(), "Due date must be in the future")
@@ -19,8 +20,10 @@ export default function UpdateDueDateForm({ choreId }: { choreId: string }) {
   if (!chore) throw new Error("Chore not found");
 
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+  const params = useSearchParams();
 
-  const { handleSubmit, control, reset } = useForm({
+  const { handleSubmit, control, reset, formState } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       dueDate: chore.due_date || new Date()
@@ -31,18 +34,29 @@ export default function UpdateDueDateForm({ choreId }: { choreId: string }) {
     async (data: z.infer<typeof schema>) => {
       await updateChoreDueDate(choreId, data.dueDate);
       setIsOpen(false);
+      router.replace("?", { scroll: false });
     },
     [choreId]
   );
+
+  useEffect(() => {
+    if (params.get("edit") === "due-date") {
+      setIsOpen(true);
+      reset({ dueDate: chore.due_date || new Date() });
+    } else {
+      setIsOpen(false);
+    }
+  }, [params]);
 
   return (
     <CustomDialog
       open={isOpen}
       onOpenChange={(open) => {
         if (open) {
-          reset({ dueDate: chore.due_date || new Date() });
+          router.push("?edit=due-date", { scroll: false });
+        } else {
+          router.replace("?", { scroll: false });
         }
-        setIsOpen(open);
       }}
       trigger={
         <Button variant="ghost" className="justify-start w-fit text-left">
@@ -69,7 +83,12 @@ export default function UpdateDueDateForm({ choreId }: { choreId: string }) {
             />
           )}
         />
-        <Button variant="primary" className="mt-4">
+        <Button
+          variant="primary"
+          className="mt-4"
+          type="submit"
+          disabled={formState.isSubmitting || !formState.isValid}
+        >
           Save Changes
         </Button>
       </form>

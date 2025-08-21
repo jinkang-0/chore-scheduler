@@ -1,7 +1,7 @@
 "use client";
 
 import { useChoreState } from "@/context/chore-state";
-import { redirect, useSearchParams } from "next/navigation";
+import { redirect } from "next/navigation";
 import {
   LuCalendar,
   LuCheck,

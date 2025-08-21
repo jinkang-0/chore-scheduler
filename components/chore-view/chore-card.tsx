@@ -3,7 +3,7 @@
 import { useChoreState } from "@/context/chore-state";
 import { formatDate } from "@/lib/utils";
 import { cva } from "class-variance-authority";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useMemo } from "react";
 
 const cardStyles = cva(
