@@ -36,7 +36,7 @@ const buttonStyles = cva(
         secondary: "px-4 py-2 bg-secondary hover:brightness-105 transition-all"
       },
       isLoading: {
-        true: "cursor-default opacity-50",
+        true: "cursor-default! opacity-50",
         false: ""
       }
     }

@@ -2,10 +2,12 @@
 
 import { shuffle } from "@/lib/utils";
 import { db } from "./internal";
-import { choresTable, choreUserTable } from "./schema";
+import { choreLogTable, choresTable, choreUserTable } from "./schema";
 import { ChoreInterval } from "@/types/types";
 import { revalidatePath } from "next/cache";
 import { monthdayOptions, weekdayOptions } from "@/data/dropdown";
+import { authConfig } from "../auth/config";
+import { getServerSession } from "next-auth";
 
 export async function createChore(chore: {
   title: string;
@@ -22,36 +24,54 @@ export async function createChore(chore: {
     throw new Error("Assigned person must be in the people pool");
   }
 
+  // get authenticated user
+  const session = await getServerSession(authConfig);
+  if (!session?.user?.id) {
+    throw new Error("User not authenticated");
+  }
+
   // randomize people pool
   const peoplePoolWithoutAssignTo = shuffle(
     chore.peoplePool.filter((userId) => userId !== chore.assignTo)
   );
   const pool = [chore.assignTo, ...peoplePoolWithoutAssignTo];
 
-  // insert chore
-  const [newChore] = await db
-    .insert(choresTable)
-    .values({
-      due_date: chore.dueDate,
-      title: chore.title,
-      interval: chore.interval,
-      emoji: chore.emoji,
-      passIndex: 0,
-      weekday: chore.weekday ? Number(chore.weekday) : null,
-      monthday: chore.monthday ? Number(chore.monthday) : null
-    })
-    .returning();
-
-  // insert queue
+  // create queue
   const today = new Date();
   const todayMs = today.getTime();
-  const queue = pool.map((userId, idx) => ({
-    chore_id: newChore.id,
-    user_id: userId,
-    time_enqueued: new Date(todayMs + idx * 1000)
-  }));
 
-  await db.insert(choreUserTable).values(queue);
+  await db.transaction(async (tx) => {
+    // insert chore
+    const [newChore] = await tx
+      .insert(choresTable)
+      .values({
+        due_date: chore.dueDate,
+        title: chore.title,
+        interval: chore.interval,
+        emoji: chore.emoji,
+        passIndex: 0,
+        weekday: chore.weekday ? Number(chore.weekday) : null,
+        monthday: chore.monthday ? Number(chore.monthday) : null
+      })
+      .returning();
+
+    // insert queue
+    const queue = pool.map((userId, idx) => ({
+      chore_id: newChore.id,
+      user_id: userId,
+      time_enqueued: new Date(todayMs + idx * 1000)
+    }));
+
+    await tx.insert(choreUserTable).values(queue);
+
+    // insert log
+    await tx.insert(choreLogTable).values({
+      chore_id: newChore.id,
+      user_id: session.user.whitelist_id,
+      type: "SUCCESS",
+      message: `Chore created by ${session.user.name}`
+    });
+  });
 
   // revalidate main page
   revalidatePath("/");

@@ -61,10 +61,10 @@ export const choreLogTable = pgTable("chore_log", {
   id: uuid().defaultRandom().notNull().primaryKey(),
   chore_id: uuid()
     .notNull()
-    .references(() => choresTable.id),
+    .references(() => choresTable.id, { onDelete: "cascade" }),
   user_id: uuid()
     .notNull()
-    .references(() => whitelistedUsers.id),
+    .references(() => whitelistedUsers.id, { onDelete: "set null" }),
   timestamp: timestamp({ withTimezone: true }).notNull().defaultNow(),
   message: text().notNull(),
   type: choreLogTypeEnum().notNull()

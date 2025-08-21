@@ -173,3 +173,31 @@ export async function updateChoreDueDate(choreId: string, dueDate: Date) {
 
   revalidatePath("/");
 }
+
+/**
+ * Increment the pass index of a chore.
+ */
+export async function incrementChorePassIndex(choreId: string) {
+  const session = await getServerSession(authConfig);
+  if (!session?.user?.id) {
+    throw new Error("User not authenticated");
+  }
+
+  await db.transaction(async (tx) => {
+    // increment the pass index of the chore
+    await tx
+      .update(choresTable)
+      .set({ passIndex: sql`${choresTable.passIndex} + 1` })
+      .where(eq(choresTable.id, choreId));
+
+    // add log
+    await tx.insert(choreLogTable).values({
+      chore_id: choreId,
+      user_id: session.user.whitelist_id,
+      type: "INFO",
+      message: `${session.user.name} passed`
+    });
+  });
+
+  revalidatePath("/");
+}
