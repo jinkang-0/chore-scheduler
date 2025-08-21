@@ -1,5 +1,6 @@
 import { authConfig } from "@/api/auth/config";
 import { getChores } from "@/api/db";
+import ChoreHome from "@/components/chore-view/main-view";
 import { ChoreStateProvider } from "@/context/chore-state";
 import { HomeDialogProvider } from "@/context/home-dialog";
 import { ChoreWithQueue } from "@/types/types";
@@ -26,7 +27,9 @@ export default async function HomeLayout({
 
   return (
     <ChoreStateProvider choreMap={map}>
-      <HomeDialogProvider>{children}</HomeDialogProvider>
+      <HomeDialogProvider>
+        <ChoreHome>{children}</ChoreHome>
+      </HomeDialogProvider>
     </ChoreStateProvider>
   );
 }

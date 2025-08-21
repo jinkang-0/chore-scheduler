@@ -3,7 +3,7 @@
 import { useChoreState } from "@/context/chore-state";
 import { formatDate } from "@/lib/utils";
 import { cva } from "class-variance-authority";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo } from "react";
 
 const cardStyles = cva(
@@ -27,13 +27,18 @@ export default function ChoreCard({
 }) {
   const { choreMap } = useChoreState();
   const chore = useMemo(() => choreMap?.[choreId], [choreMap, choreId]);
-  const searchParams = useSearchParams();
   const router = useRouter();
-  const id = searchParams.get("id");
+  const pathname = usePathname();
+
+  const id = useMemo(() => {
+    const parts = pathname.split("/");
+    if (parts.length < 2) return null;
+    return parts[1];
+  }, [pathname]);
 
   const handleClick = useCallback(() => {
     if (id === choreId) router.replace("/");
-    else router.push(`/?mode=view&id=${choreId}`);
+    else router.push(`/${choreId}/view`);
   }, [router, id, choreId]);
 
   if (!chore) {

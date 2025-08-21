@@ -21,14 +21,11 @@ import { weekdays } from "@/data/datetime";
 import { useSession } from "next-auth/react";
 import UpdateDueDateForm from "./update-due-date-form";
 
-export default function ChoreDetails() {
+export default function ChoreDetails({ choreId }: { choreId: string }) {
   const { data: session } = useSession();
   if (!session || !session.user) return redirect("/login");
 
   const user = session.user;
-
-  const searchParams = useSearchParams();
-  const choreId = searchParams.get("id");
 
   const { choreMap } = useChoreState();
   const chore = choreMap[choreId || ""];
