@@ -33,7 +33,8 @@ const buttonStyles = cva(
         primary: "px-4 py-2 bg-primary hover:brightness-105 transition-all",
         ghost:
           "p-2 after:bg-white/5 after:content-[''] after:absolute relative after:top-1/2 after:left-1/2 after:p-4 after:w-full after:h-full after:opacity-0 hover:after:opacity-100 after:transition-opacity after:-translate-1/2 after:rounded-[inherit]",
-        secondary: "px-4 py-2 bg-secondary hover:brightness-105 transition-all"
+        secondary: "px-4 py-2 bg-secondary hover:brightness-105 transition-all",
+        danger: "px-4 py-2 bg-destructive hover:brightness-105 transition-all"
       },
       isLoading: {
         true: "cursor-default! opacity-50",

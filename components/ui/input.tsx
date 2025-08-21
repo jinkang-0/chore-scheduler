@@ -1,6 +1,6 @@
 import { cva } from "class-variance-authority";
 
-type InputVariant = "contentEditable" | "checkbox" | "textbox";
+type InputVariant = "contentEditable" | "textbox";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   variant: InputVariant;
@@ -11,8 +11,7 @@ const inputStyles = cva("", {
     variant: {
       contentEditable: "bg-transparent outline-none",
       textbox:
-        "px-3 py-2 bg-w5 rounded-lg focus-visible:ring-1 focus-visible:ring-w8 outline-none",
-      checkbox: "w-3 h-3 rounded"
+        "px-3 py-2 bg-w5 rounded-lg focus-visible:ring-1 focus-visible:ring-w8 outline-none"
     }
   }
 });

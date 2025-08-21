@@ -1,15 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-import { SessionProvider } from "next-auth/react";
 import { getServerSession } from "next-auth";
 import { authConfig } from "@/api/auth/config";
 import SessionProviderClient from "@/context/session";
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"]
-});
 
 export const metadata: Metadata = {
   title: "Chore Scheduler",
@@ -25,7 +18,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={`${inter.variable} antialiased w-full h-svh`}>
+      <body className={`antialiased w-full h-svh`}>
         <SessionProviderClient session={session}>
           {children}
         </SessionProviderClient>

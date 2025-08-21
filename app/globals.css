@@ -13,6 +13,7 @@
   --color-w11: #b9b9b9;
   --color-w10: #a0a0a0;
   --color-w8: #7f7f7f;
+  --color-w6: #4d4d4d;
   --color-w5: #3e3e3e;
   --color-w4: #313131;
   --color-w2: #292f39;
@@ -20,8 +21,7 @@
   --color-primary: #35556a;
   --color-secondary: #2e3539;
   --color-danger: #b76969;
-
-  --font-sans: var(--font-inter);
+  --color-destructive: #634141;
 
   @keyframes fade-in {
     from {
@@ -51,5 +51,9 @@
 body {
   background: var(--background);
   color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+* {
   font-family: var(--font-sans);
 }
