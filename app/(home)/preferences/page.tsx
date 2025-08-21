@@ -1,6 +1,7 @@
 "use client";
 
-import { Button, ButtonAsync } from "@/components/ui/button";
+import EditNameForm from "@/components/preferences/edit-name";
+import { Button, ButtonAsync, ButtonLink } from "@/components/ui/button";
 import CustomCheckbox from "@/components/ui/checkbox";
 import TabsGroup from "@/components/ui/tabs-group";
 import { signOut, useSession } from "next-auth/react";
@@ -14,6 +15,7 @@ export default function PreferencesPage() {
 
   const handleLogout = useCallback(async () => {
     await signOut({ redirect: true });
+    redirect("/login");
   }, []);
 
   return (
@@ -26,9 +28,10 @@ export default function PreferencesPage() {
             <p className="text-w10">Logged in as</p>
             <div className="flex w-full items-center justify-between gap-2">
               <h2 className="text-2xl font-semibold">{session.user.name}</h2>
-              <Button variant="ghost">
-                <LuPencil size={24} className="text-w11" />
-              </Button>
+              <ButtonLink href="?edit=name" variant="ghost">
+                <LuPencil size={20} className="text-w11" />
+              </ButtonLink>
+              <EditNameForm />
             </div>
           </div>
 
@@ -40,10 +43,10 @@ export default function PreferencesPage() {
 
           {/* notification preferences */}
           <div className="mt-12">
-            <h4 className="font-medium">Notifications</h4>
+            <h2 className="text-xl font-medium">Notifications</h2>
             <label
               htmlFor="email"
-              className="select-none flex items-center gap-2 mt-2"
+              className="select-none flex items-center gap-2 mt-4"
             >
               <CustomCheckbox id="email" name="email" />
               <span className="text-lg">receive email chore reminders</span>
