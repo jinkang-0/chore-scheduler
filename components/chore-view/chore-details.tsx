@@ -11,7 +11,7 @@ import {
   LuUser,
   LuUsers
 } from "react-icons/lu";
-import { Button, ButtonAsync } from "../ui/button";
+import { Button, ButtonAsync, ButtonLink } from "../ui/button";
 import { useCallback, useMemo } from "react";
 import {
   incrementChorePassIndex,
@@ -61,9 +61,9 @@ export default function ChoreDetails({ choreId }: { choreId: string }) {
           <p className="text-2xl">{chore.emoji}</p>
           <h3 className="text-2xl font-semibold">{chore.title}</h3>
         </div>
-        <Button variant="ghost">
+        <ButtonLink href={`/${choreId}/edit`} variant="ghost">
           <LuPencil className="text-w11" size={20} />
-        </Button>
+        </ButtonLink>
       </header>
 
       <div className="text-w11 flex gap-2 items-center">

@@ -1,11 +1,11 @@
 "use client";
 
 import ChoreCard from "@/components/chore-view/chore-card";
-import Tab from "@/components/ui/tab";
 import { useChoreState } from "@/context/chore-state";
-import { LuClipboardList, LuPlus, LuUser } from "react-icons/lu";
+import { LuPlus } from "react-icons/lu";
 import { ButtonLink } from "@/components/ui/button";
 import { formatDateShort } from "@/lib/utils";
+import TabsGroup from "../ui/tabs-group";
 
 export default function ChoreHome({ children }: { children: React.ReactNode }) {
   const { choreMap } = useChoreState();
@@ -49,10 +49,7 @@ export default function ChoreHome({ children }: { children: React.ReactNode }) {
       </div>
       <main className="grid grid-cols-10 p-6 sm:p-16 h-full w-full max-w-[1200px] mx-auto">
         <div className="col-span-10 md:col-span-4 flex flex-col h-full gap-4">
-          <div className="flex items-center gap-11">
-            <Tab href="/" icon={<LuClipboardList size={24} />} />
-            <Tab href="/preferences" icon={<LuUser size={24} />} />
-          </div>
+          <TabsGroup />
           <div className="flex-1 pb-40 flex flex-col gap-2">
             {overdueChores.length > 0 && (
               <div className="flex flex-col gap-2 mb-4">

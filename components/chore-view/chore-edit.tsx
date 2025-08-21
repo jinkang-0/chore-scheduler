@@ -1,79 +1,85 @@
 "use client";
 
 import { DropdownMenu } from "radix-ui";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Button } from "../ui/button";
 import CustomEmojiPicker from "../ui/emoji-picker";
 import { Emoji } from "frimousse";
 import Input from "../ui/input";
 import {
   getPeoplePoolOptions,
+  intervalMap,
   intervalOptions,
+  monthdayMap,
   monthdayOptions,
+  weekdayMap,
   weekdayOptions
 } from "@/data/dropdown";
 import { CustomSelect, CustomSelectAsync } from "../ui/select";
-import { LuCalendar, LuClock, LuPlus } from "react-icons/lu";
+import { LuCalendar, LuClock, LuSave } from "react-icons/lu";
 import { ChoreInterval, DropdownOption } from "@/types/types";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { DayPicker, DayPickerDropdown } from "../ui/day-picker";
-import { createChore } from "@/api/db";
+import { useChoreState } from "@/context/chore-state";
+import { updateChore } from "@/api/db";
 
-const schema = z
-  .object({
-    title: z.string().min(1, "Title is required"),
-    interval: z.enum(
-      intervalOptions.map((opt) => opt.value),
-      "Interval is required"
-    ),
-    dueDate: z.date(),
-    peoplePool: z.array(z.string()).min(1, "At least one person is required"),
-    assignTo: z.string().min(1, "One person must be assigned at the start"),
-    emoji: z.string(),
-    weekday: z
-      .enum(
-        weekdayOptions.map((opt) => opt.value).filter((opt) => opt !== null)
-      )
-      .nullable()
-      .optional(),
-    monthday: z
-      .enum(
-        monthdayOptions.map((opt) => opt.value).filter((opt) => opt !== null)
-      )
-      .nullable()
-      .optional()
-  })
-  .superRefine((data, ctx) => {
-    if (data.assignTo && !data.peoplePool.includes(data.assignTo))
-      ctx.addIssue({
-        code: "custom",
-        message: "Assigned person must be in the people pool",
-        path: ["assignTo"]
-      });
-  });
+const schema = z.object({
+  title: z.string().min(1, "Title is required"),
+  interval: z.enum(
+    intervalOptions.map((opt) => opt.value),
+    "Interval is required"
+  ),
+  dueDate: z.date(),
+  peoplePool: z.array(z.string()).min(1, "At least one person is required"),
+  emoji: z.string(),
+  weekday: z
+    .enum(
+      weekdayOptions.map((opt) => opt.value).filter((opt) => opt !== null),
+      "Invalid weekday"
+    )
+    .nullable()
+    .optional(),
+  monthday: z
+    .enum(
+      monthdayOptions.map((opt) => opt.value).filter((opt) => opt !== null),
+      "Invalid monthday"
+    )
+    .nullable()
+    .optional()
+});
 
-export default function CreateForm() {
+export default function CreateForm({ choreId }: { choreId: string }) {
+  // get defaults
+  const { choreMap } = useChoreState();
+  const chore = choreMap[choreId];
+  if (!chore) return redirect("/");
+
+  const defaultPeoplePool = useMemo(
+    () => chore.queue.map((p) => ({ value: p.id, label: p.name })),
+    [chore.queue]
+  );
+
   // states
-  const [emoji, setEmoji] = useState("🚀");
+  const [emoji, setEmoji] = useState(chore.emoji);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [interval, setInterval] = useState<ChoreInterval | undefined>(
-    intervalOptions[0].value
+    chore.interval
   );
-  const [selectedPeople, setSelectedPeople] = useState<
-    readonly DropdownOption[]
-  >([]);
 
   // lib
   const router = useRouter();
   const { register, control, handleSubmit, formState } = useForm({
     defaultValues: {
-      title: "Untitled chore",
-      peoplePool: [],
-      dueDate: new Date(),
-      emoji: "🚀"
+      title: chore.title || "Untitled chore",
+      peoplePool: defaultPeoplePool.map((p) => p.value),
+      dueDate: new Date(chore.due_date),
+      emoji: chore.emoji,
+      interval: chore.interval,
+      weekday: (chore.weekday ? chore.weekday.toString() : null) as any,
+      monthday: (chore.monthday ? chore.monthday.toString() : null) as any
     },
     resolver: zodResolver(schema)
   });
@@ -88,23 +94,23 @@ export default function CreateForm() {
   }, []);
 
   const handleCancel = useCallback(() => {
-    router.replace("/");
+    router.replace(`/${choreId}/view`, { scroll: false });
   }, [router]);
 
-  const handleCreate = useCallback(
+  const handleEdit = useCallback(
     async (values: z.infer<typeof schema>) => {
-      await createChore({
+      await updateChore({
+        id: choreId,
         title: values.title,
-        interval: values.interval,
-        dueDate: values.dueDate,
-        peoplePool: values.peoplePool,
-        assignTo: values.assignTo,
         emoji: values.emoji,
-        weekday: values.weekday || null,
-        monthday: values.monthday || null
-      }).then(() => {
-        router.replace("/", { scroll: false });
+        interval: values.interval,
+        weekday: values.weekday ? Number(values.weekday) : null,
+        monthday: values.monthday ? Number(values.monthday) : null,
+        dueDate: values.dueDate,
+        peoplePool: values.peoplePool
       });
+
+      router.replace(`/${choreId}/view`, { scroll: false });
     },
     [router]
   );
@@ -112,7 +118,7 @@ export default function CreateForm() {
   return (
     <form
       className="flex flex-col p-6 lg:p-8 rounded-lg bg-w4 w-full h-full gap-6 overflow-y-auto"
-      onSubmit={handleSubmit(handleCreate)}
+      onSubmit={handleSubmit(handleEdit)}
     >
       {/* title and emoji */}
       <div className="space-y-2">
@@ -142,7 +148,7 @@ export default function CreateForm() {
             variant="contentEditable"
             className="text-2xl font-semibold w-full"
             placeholder="Chore title"
-            defaultValue="Untitled chore"
+            defaultValue={chore.title || "Untitled chore"}
             {...register("title")}
           />
         </div>
@@ -177,6 +183,10 @@ export default function CreateForm() {
                     onChange={(v) => {
                       setInterval(v?.value);
                       field.onChange(v?.value || null);
+                    }}
+                    defaultValue={{
+                      label: intervalMap[chore.interval],
+                      value: chore.interval
                     }}
                     isMulti={false}
                   />
@@ -239,6 +249,10 @@ export default function CreateForm() {
                       onChange={(v) => {
                         field.onChange(v?.value || null);
                       }}
+                      defaultValue={{
+                        label: weekdayMap[new String(chore.weekday) as any],
+                        value: new String(chore.weekday) as any
+                      }}
                       isMulti={false}
                     />
                     {fieldState.error && (
@@ -272,6 +286,10 @@ export default function CreateForm() {
                       onChange={(v) => {
                         field.onChange(v?.value || null);
                       }}
+                      defaultValue={{
+                        label: monthdayMap[new String(chore.monthday) as any],
+                        value: new String(chore.monthday) as any
+                      }}
                       isMulti={false}
                     />
                     {fieldState.error && (
@@ -304,33 +322,8 @@ export default function CreateForm() {
                   loadOptions={getPeoplePoolOptions}
                   onChange={(options) => {
                     field.onChange(options.map((opt) => opt.value));
-                    setSelectedPeople(options);
                   }}
-                />
-                {fieldState.error && (
-                  <p className="text-red-500 text-sm">
-                    {fieldState.error.message}
-                  </p>
-                )}
-              </>
-            )}
-          />
-        </div>
-
-        {/* assign to */}
-        <div className="space-y-2">
-          <p className="font-medium">Assign first to</p>
-          <Controller
-            name="assignTo"
-            control={control}
-            render={({ field, fieldState }) => (
-              <>
-                <CustomSelect
-                  instanceId="assignTo"
-                  isSearchable={false}
-                  options={selectedPeople}
-                  onChange={(v) => field.onChange(v?.value || "")}
-                  isMulti={false}
+                  defaultValue={defaultPeoplePool}
                 />
                 {fieldState.error && (
                   <p className="text-red-500 text-sm">
@@ -352,8 +345,8 @@ export default function CreateForm() {
             type="submit"
             disabled={formState.isSubmitting}
           >
-            <LuPlus size={24} />
-            Create
+            <LuSave size={24} />
+            Save
           </Button>
         </div>
       </div>

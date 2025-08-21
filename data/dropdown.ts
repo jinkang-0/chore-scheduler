@@ -6,6 +6,10 @@ export const intervalOptions = [
   { value: "MONTHLY", label: "Monthly" }
 ] as const;
 
+export const intervalMap = Object.fromEntries(
+  intervalOptions.map((option) => [option.value, option.label])
+);
+
 export const weekdayOptions = [
   { value: null, label: "No specific day" },
   { value: "0", label: "Sunday" },
@@ -16,6 +20,10 @@ export const weekdayOptions = [
   { value: "5", label: "Friday" },
   { value: "6", label: "Saturday" }
 ] as const;
+
+export const weekdayMap = Object.fromEntries(
+  weekdayOptions.map((option) => [option.value, option.label])
+);
 
 export const monthdayOptions = [
   { value: null, label: "No specific day" },
@@ -48,6 +56,10 @@ export const monthdayOptions = [
   { value: "27", label: "day 27" },
   { value: "28", label: "day 28" }
 ] as const;
+
+export const monthdayMap = Object.fromEntries(
+  monthdayOptions.map((option) => [option.value, option.label])
+);
 
 export const getPeoplePoolOptions = async () => {
   const users = await getWhitelistedPeople();

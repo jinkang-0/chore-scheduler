@@ -1,6 +1,6 @@
 "use server";
 
-import { eq, sql } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 import { db } from "./internal";
 import {
   choreLogTable,
@@ -15,6 +15,27 @@ import { getServerSession } from "next-auth";
 import { authConfig } from "../auth/config";
 
 /**
+ * Helper function to get a chore with its queue by ID.
+ */
+async function getChoreWithQueue(choreId: string) {
+  const query = sql`
+      WITH n AS (
+        SELECT * FROM ${choreUserTable} AS cu
+        JOIN ${whitelistedUsers} AS u ON cu.user_id = u.id
+      )
+      SELECT c.*, json_agg(json_build_object('name', n.name, 'id', n.id) ORDER BY n.time_enqueued) AS queue
+      FROM ${choresTable} AS c
+      LEFT JOIN n ON c.id = n.chore_id
+      GROUP BY c.id
+      HAVING c.id = ${choreId}
+    `;
+
+  const [chore] = (await db.execute(query)) as unknown as ChoreWithQueue[];
+
+  return chore;
+}
+
+/**
  * Mark the chore as done by updating its due date and rotating the queue.
  * A log entry is created for the action.
  * The authenticated user is placed at the end of the queue.
@@ -25,19 +46,11 @@ export async function markChoreAsDone(choreId: string) {
     throw new Error("User not authenticated");
   }
 
-  const query = sql`
-      WITH n AS (
-        SELECT * FROM ${choreUserTable} AS cu
-        JOIN ${whitelistedUsers} AS u ON cu.user_id = u.id
-      )
-      SELECT c.*, array_agg(n.id ORDER BY n.time_enqueued) AS queue
-      FROM ${choresTable} AS c
-      LEFT JOIN n ON c.id = n.chore_id
-      GROUP BY c.id
-      HAVING c.id = ${choreId}
-    `;
-
-  const [chore] = (await db.execute(query)) as unknown as ChoreWithQueue[];
+  const [chore] = await db
+    .select()
+    .from(choresTable)
+    .where(eq(choresTable.id, choreId))
+    .limit(1);
 
   if (!chore) {
     throw new Error("Chore not found");
@@ -132,10 +145,18 @@ export async function updateUsername(name: string) {
     throw new Error("User not authenticated");
   }
 
-  await db
-    .update(whitelistedUsers)
-    .set({ name })
-    .where(eq(whitelistedUsers.id, session.user.whitelist_id));
+  // update names
+  await db.transaction(async (tx) => {
+    await db
+      .update(whitelistedUsers)
+      .set({ name })
+      .where(eq(whitelistedUsers.id, session.user.whitelist_id));
+
+    await db
+      .update(userTable)
+      .set({ name })
+      .where(eq(userTable.id, session.user.id));
+  });
 
   revalidatePath("/");
 }
@@ -196,6 +217,80 @@ export async function incrementChorePassIndex(choreId: string) {
       user_id: session.user.whitelist_id,
       type: "INFO",
       message: `${session.user.name} passed`
+    });
+  });
+
+  revalidatePath("/");
+}
+
+/**
+ *
+ */
+export async function updateChore(chore: {
+  id: string;
+  title: string;
+  emoji: string;
+  interval: "DAILY" | "WEEKLY" | "MONTHLY";
+  weekday?: number | null;
+  monthday?: number | null;
+  dueDate: Date;
+  peoplePool: string[];
+}) {
+  // ensure the user is authenticated
+  const session = await getServerSession(authConfig);
+  if (!session?.user?.id) {
+    throw new Error("User not authenticated");
+  }
+
+  const oldChore = await getChoreWithQueue(chore.id);
+
+  // find removed and newly added users (if any)
+  const removedUsers = oldChore.queue
+    .filter((user) => !chore.peoplePool.includes(user.id))
+    .map((user) => user.id);
+
+  const newUsers = chore.peoplePool.filter(
+    (userId) => !oldChore.queue.some((u) => u.id === userId)
+  );
+
+  const now = Date.now();
+  const newQueue = newUsers.map((userId, idx) => ({
+    chore_id: chore.id,
+    user_id: userId,
+    time_enqueued: new Date(now + idx * 1000)
+  }));
+
+  // update the chore in the database
+  await db.transaction(async (tx) => {
+    // update the chore details
+    await tx
+      .update(choresTable)
+      .set({
+        title: chore.title,
+        emoji: chore.emoji,
+        interval: chore.interval,
+        weekday: chore.weekday ?? null,
+        monthday: chore.monthday ?? null,
+        due_date: chore.dueDate
+      })
+      .where(eq(choresTable.id, chore.id));
+
+    // remove removed users from queue
+    await tx
+      .delete(choreUserTable)
+      .where(inArray(choreUserTable.user_id, removedUsers));
+
+    // add new users to the queue
+    if (newQueue.length > 0) {
+      await tx.insert(choreUserTable).values(newQueue);
+    }
+
+    // add log entry for the update
+    await tx.insert(choreLogTable).values({
+      chore_id: chore.id,
+      user_id: session.user.whitelist_id,
+      type: "INFO",
+      message: `Chore updated by ${session.user.name}`
     });
   });
 
