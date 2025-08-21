@@ -1,10 +1,5 @@
 "use client";
 
-import ChoreCard from "@/components/chore-view/chore-card";
-import { useChoreState } from "@/context/chore-state";
-import { LuPlus } from "react-icons/lu";
-import { ButtonLink } from "@/components/ui/button";
-import { formatDateShort } from "@/lib/utils";
 import TabsGroup from "../ui/tabs-group";
 import { useLogState } from "@/context/log-state";
 import LogCard from "./log-card";

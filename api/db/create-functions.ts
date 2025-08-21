@@ -2,12 +2,18 @@
 
 import { shuffle } from "@/lib/utils";
 import { db } from "./internal";
-import { choreLogTable, choresTable, choreUserTable } from "./schema";
+import {
+  choreLogTable,
+  choresTable,
+  choreUserTable,
+  whitelistedUsers
+} from "./schema";
 import { ChoreInterval } from "@/types/types";
 import { revalidatePath } from "next/cache";
 import { monthdayOptions, weekdayOptions } from "@/data/dropdown";
 import { authConfig } from "../auth/config";
 import { getServerSession } from "next-auth";
+import { eq } from "drizzle-orm";
 
 export async function createChore(chore: {
   title: string;
@@ -29,6 +35,13 @@ export async function createChore(chore: {
   if (!session?.user?.id) {
     throw new Error("User not authenticated");
   }
+
+  // get assigned to user
+  const [assignedUser] = await db
+    .select()
+    .from(whitelistedUsers)
+    .where(eq(whitelistedUsers.id, chore.assignTo));
+  const assignedName = assignedUser?.name || "Unknown";
 
   // randomize people pool
   const peoplePoolWithoutAssignTo = shuffle(
@@ -65,12 +78,22 @@ export async function createChore(chore: {
     await tx.insert(choreUserTable).values(queue);
 
     // insert log
-    await tx.insert(choreLogTable).values({
-      chore_id: newChore.id,
-      user_id: session.user.whitelist_id,
-      type: "SUCCESS",
-      message: `Chore created by ${session.user.name}`
-    });
+    await tx.insert(choreLogTable).values([
+      {
+        chore_id: newChore.id,
+        user_id: session.user.whitelist_id,
+        type: "INFO",
+        message: `Chore created by ${session.user.name}`,
+        timestamp: today
+      },
+      {
+        chore_id: newChore.id,
+        user_id: chore.assignTo,
+        type: "INFO",
+        message: `Chore assigned to ${assignedName}`,
+        timestamp: new Date(todayMs + 1000)
+      }
+    ]);
   });
 
   // revalidate main page

@@ -46,7 +46,8 @@ export function formatDateShort(date: Date | string): string {
   const d = new Date(date);
   return d.toLocaleDateString("en-US", {
     month: "short",
-    day: "numeric"
+    day: "numeric",
+    weekday: "short"
   });
 }
 
@@ -91,6 +92,7 @@ export function semanticJoin(arr: string[]): string {
 
 /**
  * Checks if two arrays are equal in terms of content.
+ * Time: O(n)
  */
 export function arrayEquality<T>(a: T[], b: T[]): boolean {
   if (a.length !== b.length) return false;

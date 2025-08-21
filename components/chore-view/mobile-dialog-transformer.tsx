@@ -10,14 +10,16 @@ import { useRouter } from "next/navigation";
  * for mobile devices.
  */
 export default function MobileDialogTransformer({
-  children
+  children,
+  returnHref = "/"
 }: {
   children: React.ReactNode;
+  returnHref?: string;
 }) {
   const router = useRouter();
 
   const handleCancel = useCallback(() => {
-    router.replace("/");
+    router.replace(returnHref);
   }, [router]);
 
   return (

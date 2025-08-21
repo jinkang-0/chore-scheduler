@@ -71,7 +71,7 @@ export default function ChoreHome({ children }: { children: React.ReactNode }) {
                 </div>
               ))}
           </div>
-          <div className="fixed grid grid-cols-10 left-1/2 -translate-x-1/2 bottom-6 md:bottom-16 pt-4 w-full px-6 sm:px-16 z-1 bg-background md:max-w-[1200px]">
+          <div className="fixed grid grid-cols-10 left-1/2 -translate-x-1/2 bottom-0 pb-6 md:pb-16 pt-4 w-full px-6 sm:px-16 z-1 bg-background md:max-w-[1200px]">
             <div className="col-span-10 md:col-span-4">
               <ButtonLink
                 variant="glass"

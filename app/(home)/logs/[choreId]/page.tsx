@@ -9,7 +9,7 @@ export default async function ViewChoreDetails({
   const { choreId } = await params;
 
   return (
-    <MobileDialogTransformer>
+    <MobileDialogTransformer returnHref="/logs">
       <LogDetails choreId={choreId} />
     </MobileDialogTransformer>
   );

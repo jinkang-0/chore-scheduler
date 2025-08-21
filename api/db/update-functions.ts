@@ -1,6 +1,6 @@
 "use server";
 
-import { eq, inArray, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { db } from "./internal";
 import {
   choreLogTable,
@@ -137,7 +137,12 @@ export async function markChoreAsDone(choreId: string) {
     // rotate queue
     await tx
       .delete(choreUserTable)
-      .where(eq(choreUserTable.user_id, session.user.whitelist_id));
+      .where(
+        and(
+          eq(choreUserTable.user_id, session.user.whitelist_id),
+          eq(choreUserTable.chore_id, chore.id)
+        )
+      );
 
     await tx.insert(choreUserTable).values({
       chore_id: chore.id,
@@ -146,10 +151,13 @@ export async function markChoreAsDone(choreId: string) {
     });
 
     // update chore's due date and pass index
-    await tx.update(choresTable).set({
-      due_date: nextDueDate,
-      passIndex: 0
-    });
+    await tx
+      .update(choresTable)
+      .set({
+        due_date: nextDueDate,
+        passIndex: 0
+      })
+      .where(eq(choresTable.id, chore.id));
 
     await tx.insert(choreLogTable).values(logs);
   });
