@@ -356,3 +356,20 @@ export async function updateChore(chore: {
 
   revalidatePath("/");
 }
+
+/**
+ * Update the user's email notification preference.
+ */
+export async function updateEmailNotifications(enabled: boolean) {
+  const session = await getServerSession(authConfig);
+  if (!session?.user?.id) {
+    throw new Error("User not authenticated");
+  }
+
+  await db
+    .update(userTable)
+    .set({ email_notifications: enabled })
+    .where(eq(userTable.id, session.user.id));
+
+  revalidatePath("/");
+}

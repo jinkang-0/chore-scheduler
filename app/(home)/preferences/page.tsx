@@ -1,8 +1,8 @@
 "use client";
 
 import EditNameForm from "@/components/preferences/edit-name";
-import { Button, ButtonAsync, ButtonLink } from "@/components/ui/button";
-import CustomCheckbox from "@/components/ui/checkbox";
+import EditNotification from "@/components/preferences/edit-notification";
+import { ButtonAsync, ButtonLink } from "@/components/ui/button";
 import TabsGroup from "@/components/ui/tabs-group";
 import { signOut, useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
@@ -42,16 +42,7 @@ export default function PreferencesPage() {
           </div>
 
           {/* notification preferences */}
-          <div className="mt-12">
-            <h2 className="text-xl font-medium">Notifications</h2>
-            <label
-              htmlFor="email"
-              className="select-none flex items-center gap-2 mt-4"
-            >
-              <CustomCheckbox id="email" name="email" />
-              <span className="text-lg">receive email chore reminders</span>
-            </label>
-          </div>
+          <EditNotification />
 
           {/* logout */}
           <div className="flex items-center justify-center mt-auto">

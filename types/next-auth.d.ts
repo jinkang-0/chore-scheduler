@@ -9,5 +9,6 @@ declare module "next-auth" {
   interface User extends DefaultUser {
     whitelist_id: string;
     is_onboarded: boolean;
+    email_notifications: boolean;
   }
 }

@@ -27,8 +27,7 @@ export const choreLogTypeEnum = pgEnum("chore_log_type", [
 export const whitelistedUsers = pgTable("whitelisted_users", {
   id: uuid().defaultRandom().primaryKey(),
   email: text().notNull().unique(),
-  name: text().notNull(),
-  email_notifications: boolean().notNull().default(true)
+  name: text().notNull()
 }).enableRLS();
 
 export const choresTable = pgTable("chores", {
@@ -84,7 +83,8 @@ export const userTable = pgTable("user", {
   whitelist_id: uuid().references(() => whitelistedUsers.id, {
     onDelete: "cascade"
   }),
-  is_onboarded: boolean().notNull().default(false)
+  is_onboarded: boolean().notNull().default(false),
+  email_notifications: boolean().notNull().default(true)
 }).enableRLS();
 
 export const accountsTable = pgTable(
