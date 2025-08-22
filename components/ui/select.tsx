@@ -77,20 +77,27 @@ function getSelectStyles<T, M extends boolean>(): StylesConfig<T, M> {
 
 export function CustomSelect<T, M extends boolean>({
   styles,
+  maxMenuHeight,
   ...props
 }: React.ComponentProps<typeof Select<T, M>>) {
   return (
-    <Select styles={{ ...getSelectStyles<T, M>(), ...styles }} {...props} />
+    <Select
+      styles={{ ...getSelectStyles<T, M>(), ...styles }}
+      maxMenuHeight={maxMenuHeight || 200}
+      {...props}
+    />
   );
 }
 
 export function CustomSelectAsync<T, M extends boolean>({
   styles,
+  maxMenuHeight,
   ...props
 }: React.ComponentProps<typeof AsyncSelect<T, M>>) {
   return (
     <AsyncSelect
       styles={{ ...getSelectStyles<T, M>(), ...styles }}
+      maxMenuHeight={maxMenuHeight || 200}
       {...props}
     />
   );

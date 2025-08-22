@@ -21,6 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { DayPicker, DayPickerDropdown } from "../ui/day-picker";
 import { createChore } from "@/api/db";
+import { cn } from "@/lib/utils";
 
 const schema = z
   .object({
@@ -102,16 +103,16 @@ export default function CreateForm() {
         emoji: values.emoji,
         weekday: values.weekday || null,
         monthday: values.monthday || null
-      }).then(() => {
-        router.replace("/", { scroll: false });
       });
+
+      router.replace("/", { scroll: false });
     },
     [router]
   );
 
   return (
     <form
-      className="flex flex-col p-6 lg:p-8 rounded-lg bg-w4 w-full h-full gap-6 overflow-y-auto"
+      className="flex flex-col p-6 lg:p-8 rounded-lg bg-w4 w-full h-full gap-6"
       onSubmit={handleSubmit(handleCreate)}
     >
       {/* title and emoji */}

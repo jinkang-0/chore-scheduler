@@ -13,7 +13,7 @@ import { ChoreLog, ChoreWithQueue } from "@/types/types";
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authConfig } from "../auth/config";
-import { arrayEquality, semanticJoin } from "@/lib/utils";
+import { arrayEquality, normalizeDate, semanticJoin } from "@/lib/utils";
 
 /**
  * Helper function to get a chore with its queue by ID.
@@ -328,7 +328,7 @@ export async function updateChore(chore: {
         interval: chore.interval,
         weekday: chore.weekday ?? null,
         monthday: chore.monthday ?? null,
-        due_date: chore.dueDate
+        due_date: normalizeDate(chore.dueDate)
       })
       .where(eq(choresTable.id, chore.id));
 

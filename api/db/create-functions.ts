@@ -1,6 +1,6 @@
 "use server";
 
-import { shuffle } from "@/lib/utils";
+import { normalizeDate, shuffle } from "@/lib/utils";
 import { db } from "./internal";
 import {
   choreLogTable,
@@ -58,7 +58,7 @@ export async function createChore(chore: {
     const [newChore] = await tx
       .insert(choresTable)
       .values({
-        due_date: chore.dueDate,
+        due_date: normalizeDate(chore.dueDate),
         title: chore.title,
         interval: chore.interval,
         emoji: chore.emoji,

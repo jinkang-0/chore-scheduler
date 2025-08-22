@@ -28,6 +28,8 @@ export default function ChoreDetails({ choreId }: { choreId: string }) {
 
   const { choreMap } = useChoreState();
   const chore = choreMap[choreId || ""];
+  if (!chore) return redirect("/");
+
   const assignedIndex = chore.passIndex % chore.queue.length;
 
   const handleMarkDone = useCallback(async () => {
@@ -54,7 +56,7 @@ export default function ChoreDetails({ choreId }: { choreId: string }) {
   }
 
   return (
-    <div className="flex flex-col p-6 lg:p-8 rounded-lg bg-w4 w-full h-full gap-2 overflow-y-auto">
+    <div className="flex flex-col p-6 lg:p-8 rounded-lg bg-w4 w-full h-full gap-2">
       <header className="flex items-center justify-between">
         <div className="flex gap-2">
           <p className="text-2xl">{chore.emoji}</p>

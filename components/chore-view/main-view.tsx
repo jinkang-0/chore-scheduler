@@ -12,6 +12,7 @@ export default function ChoreHome({ children }: { children: React.ReactNode }) {
   const allChores = Object.keys(choreMap || {});
 
   const overdueChores: string[] = [];
+  const todayChores: string[] = [];
   const futureChores: string[] = [];
 
   // filter chores
@@ -20,7 +21,12 @@ export default function ChoreHome({ children }: { children: React.ReactNode }) {
     if (!chore) return;
 
     const isOverdue = new Date(chore.due_date) < new Date();
-    if (isOverdue) {
+    const isToday =
+      new Date(chore.due_date).toDateString() === new Date().toDateString();
+
+    if (isToday) {
+      todayChores.push(choreId);
+    } else if (isOverdue) {
       overdueChores.push(choreId);
     } else {
       futureChores.push(choreId);
@@ -56,6 +62,14 @@ export default function ChoreHome({ children }: { children: React.ReactNode }) {
                 <h2 className="text-xl font-semibold">Past due</h2>
                 {overdueChores.map((choreId) => (
                   <ChoreCard key={choreId} choreId={choreId} overdue />
+                ))}
+              </div>
+            )}
+            {todayChores.length > 0 && (
+              <div className="flex flex-col gap-2 mb-4">
+                <h2 className="text-xl font-semibold">Today</h2>
+                {todayChores.map((choreId) => (
+                  <ChoreCard key={choreId} choreId={choreId} />
                 ))}
               </div>
             )}

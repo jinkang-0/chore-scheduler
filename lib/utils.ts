@@ -110,3 +110,22 @@ export function arrayEquality<T>(a: T[], b: T[]): boolean {
 
   return true;
 }
+
+/**
+ * Normalizes a date to the start of the day (midnight).
+ */
+export function normalizeDate(date: Date | string): Date {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+/**
+ * Pluralize a word based on a count.
+ */
+export function optionallyPluralize(count: number, singular: string): string {
+  if (count === 1) {
+    return singular;
+  }
+  return `${singular}s`;
+}

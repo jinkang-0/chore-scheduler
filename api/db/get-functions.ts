@@ -8,7 +8,7 @@ import {
   whitelistedUsers
 } from "./schema";
 import { db } from "./internal";
-import { ChoreWithLogs, ChoreWithQueue } from "@/types/types";
+import { Chore, ChoreWithLogs, ChoreWithQueue } from "@/types/types";
 
 /**
  * Get all chores from the database.
@@ -26,6 +26,24 @@ export async function getChores() {
   `;
 
   return (await db.execute(query)) as unknown as ChoreWithQueue[];
+}
+
+export async function getChoresDueToday() {
+  const query = sql`
+    WITH n AS (
+      SELECT * FROM ${choreUserTable} AS cu
+      JOIN ${whitelistedUsers} AS u ON cu.user_id = u.id
+    )
+    SELECT c.*, array_agg(n.email ORDER BY n.time_enqueued) AS queue
+    FROM ${choresTable} AS c
+    LEFT JOIN n ON c.id = n.chore_id
+    GROUP BY c.id
+    HAVING c.due_date < NOW()
+  `;
+
+  return (await db.execute(query)) as unknown as (Chore & {
+    queue: string[];
+  })[];
 }
 
 /**

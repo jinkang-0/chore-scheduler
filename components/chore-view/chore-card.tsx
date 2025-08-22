@@ -3,7 +3,7 @@
 import { useChoreState } from "@/context/chore-state";
 import { formatDate } from "@/lib/utils";
 import { cva } from "class-variance-authority";
-import { usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import { useCallback, useMemo } from "react";
 
 const cardStyles = cva(
@@ -26,7 +26,9 @@ export default function ChoreCard({
   overdue?: boolean;
 }) {
   const { choreMap } = useChoreState();
-  const chore = useMemo(() => choreMap?.[choreId], [choreMap, choreId]);
+  const chore = choreMap[choreId];
+  if (!chore) return redirect("/");
+
   const router = useRouter();
   const pathname = usePathname();
 

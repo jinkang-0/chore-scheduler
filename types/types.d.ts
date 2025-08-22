@@ -21,6 +21,7 @@ interface ChoreMinimal {
   id: string;
   title: string;
   emoji: string;
+  due_date: Date;
 }
 
 interface LogEntry {
