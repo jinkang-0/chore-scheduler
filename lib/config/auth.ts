@@ -17,6 +17,10 @@ if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
   );
 }
 
+if (!process.env.NEXTAUTH_SECRET) {
+  throw new Error("Missing NEXTAUTH_SECRET in environment variables");
+}
+
 export const authConfig: AuthOptions = {
   adapter: DrizzleAdapter(db, {
     // typecasting to avoid type complaints on RLS
@@ -68,5 +72,6 @@ export const authConfig: AuthOptions = {
     strategy: "database",
     maxAge: 30 * 24 * 60 * 60, // 30 days
     updateAge: 24 * 60 * 60 // 24 hours
-  }
+  },
+  secret: process.env.NEXTAUTH_SECRET
 };
