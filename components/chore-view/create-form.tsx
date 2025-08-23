@@ -21,7 +21,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { DayPicker, DayPickerDropdown } from "../ui/day-picker";
 import { createChore } from "@/api/db";
-import { cn } from "@/lib/utils";
 
 const schema = z
   .object({

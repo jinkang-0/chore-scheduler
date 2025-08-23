@@ -27,7 +27,7 @@ function AutosaveIndicator({ status }: { status: "" | "saving" | "saved" }) {
 
 export default function EditNotification() {
   const { data: session, update: updateSession } = useSession();
-  if (!session) return redirect("/login");
+  if (!session) redirect("/login");
 
   const values = useRef({
     current: session.user.email_notifications,

@@ -61,7 +61,7 @@ export function ButtonAsync({
       await onClick?.(e);
       setIsLoading(false);
     },
-    [onClick]
+    [onClick, disabled, isLoading]
   );
 
   return (

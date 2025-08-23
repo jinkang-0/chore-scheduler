@@ -27,7 +27,6 @@ export default function ChoreCard({
 }) {
   const { choreMap } = useChoreState();
   const chore = choreMap[choreId];
-  if (!chore) return redirect("/");
 
   const router = useRouter();
   const pathname = usePathname();
@@ -42,6 +41,8 @@ export default function ChoreCard({
     if (id === choreId) router.replace("/");
     else router.push(`/${choreId}/view`);
   }, [router, id, choreId]);
+
+  if (!chore) return redirect("/");
 
   if (!chore) {
     return <div className="animate-pulse bg-w11 rounded-lg w-full h-10" />;

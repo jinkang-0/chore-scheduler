@@ -30,12 +30,15 @@ export default function OnboardingPage() {
     }
   });
 
-  const onSubmit = useCallback(async (data: z.infer<typeof schema>) => {
-    await updateUsername(data.name);
-    await setOnboarded();
+  const onSubmit = useCallback(
+    async (data: z.infer<typeof schema>) => {
+      await updateUsername(data.name);
+      await setOnboarded();
 
-    router.replace("/");
-  }, []);
+      router.replace("/");
+    },
+    [router]
+  );
 
   return (
     <main className="w-full h-svh grid place-items-center">

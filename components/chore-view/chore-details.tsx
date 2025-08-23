@@ -22,20 +22,20 @@ import { useSession } from "next-auth/react";
 
 export default function ChoreDetails({ choreId }: { choreId: string }) {
   const { data: session } = useSession();
-  if (!session || !session.user) return redirect("/login");
+  if (!session || !session.user) redirect("/login");
 
   const user = session.user;
 
   const { choreMap } = useChoreState();
   const chore = choreMap[choreId || ""];
-  if (!chore) return redirect("/");
+  if (!chore) redirect("/");
 
   const assignedIndex = chore.passIndex % chore.queue.length;
 
   const handleMarkDone = useCallback(async () => {
     if (!choreId) return;
     await markChoreAsDone(choreId);
-  }, []);
+  }, [choreId]);
 
   const reoccurrence = useMemo(() => {
     if (!chore) return null;
@@ -49,7 +49,7 @@ export default function ChoreDetails({ choreId }: { choreId: string }) {
       return chore.monthday ? `day ${chore.monthday}` : null;
 
     return null;
-  }, []);
+  }, [chore]);
 
   if (!choreId || !chore) {
     return redirect("/");

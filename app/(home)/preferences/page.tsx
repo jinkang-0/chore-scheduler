@@ -11,12 +11,13 @@ import { LuMail, LuPencil } from "react-icons/lu";
 
 export default function PreferencesPage() {
   const { data: session } = useSession();
-  if (!session) return redirect("/login");
 
   const handleLogout = useCallback(async () => {
     await signOut({ redirect: true });
     redirect("/login");
   }, []);
+
+  if (!session) return redirect("/login");
 
   return (
     <main className="grid grid-cols-10 p-6 sm:p-16 h-full w-full max-w-[1200px] mx-auto">

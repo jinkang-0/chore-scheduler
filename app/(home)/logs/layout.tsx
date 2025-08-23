@@ -1,7 +1,7 @@
 import { getAllLogs } from "@/api/db";
 import LogHome from "@/components/logs-view/main-view";
 import { LogStateProvider } from "@/context/log-state";
-import { ChoreWithLogs, LogEntry } from "@/types/types";
+import { ChoreWithLogs } from "@/types/types";
 
 export default async function LogsLayout({
   children

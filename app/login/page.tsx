@@ -2,8 +2,8 @@
 
 import IconGoogle from "@/components/icons/google";
 import { Button } from "@/components/ui/button";
-import { redirect, useSearchParams } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 function getErrorMessage(error: string | null): string {
   switch (error) {

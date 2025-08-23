@@ -1,8 +1,4 @@
 import { authConfig } from "@/api/auth/config";
-import { getChores } from "@/api/db";
-import ChoreHome from "@/components/chore-view/main-view";
-import { ChoreStateProvider } from "@/context/chore-state";
-import { ChoreWithQueue } from "@/types/types";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 

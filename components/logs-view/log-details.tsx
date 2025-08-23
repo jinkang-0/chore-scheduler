@@ -7,7 +7,7 @@ import { cn, formatLogTimestamp } from "@/lib/utils";
 
 export default function LogDetails({ choreId }: { choreId: string }) {
   const { data: session } = useSession();
-  if (!session || !session.user) return redirect("/login");
+  if (!session || !session.user) redirect("/login");
 
   const user = session.user;
 

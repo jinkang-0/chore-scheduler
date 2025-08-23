@@ -17,7 +17,7 @@ import {
 } from "@/data/dropdown";
 import { CustomSelect, CustomSelectAsync } from "../ui/select";
 import { LuCalendar, LuClock, LuSave } from "react-icons/lu";
-import { ChoreInterval, DropdownOption } from "@/types/types";
+import { ChoreInterval } from "@/types/types";
 import { redirect, useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -51,11 +51,13 @@ const schema = z.object({
     .optional()
 });
 
+type FormValues = z.infer<typeof schema>;
+
 export default function CreateForm({ choreId }: { choreId: string }) {
   // get defaults
   const { choreMap } = useChoreState();
   const chore = choreMap[choreId];
-  if (!chore) return redirect("/");
+  if (!chore) redirect("/");
 
   const defaultPeoplePool = useMemo(
     () => chore.queue.map((p) => ({ value: p.id, label: p.name })),
@@ -78,8 +80,12 @@ export default function CreateForm({ choreId }: { choreId: string }) {
       dueDate: new Date(chore.due_date),
       emoji: chore.emoji,
       interval: chore.interval,
-      weekday: (chore.weekday ? chore.weekday.toString() : null) as any,
-      monthday: (chore.monthday ? chore.monthday.toString() : null) as any
+      weekday: (chore.weekday
+        ? chore.weekday.toString()
+        : null) as FormValues["weekday"],
+      monthday: (chore.monthday
+        ? chore.monthday.toString()
+        : null) as FormValues["monthday"]
     },
     resolver: zodResolver(schema)
   });
@@ -95,10 +101,10 @@ export default function CreateForm({ choreId }: { choreId: string }) {
 
   const handleCancel = useCallback(() => {
     router.replace(`/${choreId}/view`, { scroll: false });
-  }, [router]);
+  }, [router, choreId]);
 
   const handleEdit = useCallback(
-    async (values: z.infer<typeof schema>) => {
+    async (values: FormValues) => {
       await updateChore({
         id: choreId,
         title: values.title,
@@ -112,7 +118,7 @@ export default function CreateForm({ choreId }: { choreId: string }) {
 
       router.replace(`/${choreId}/view`, { scroll: false });
     },
-    [router]
+    [router, choreId]
   );
 
   return (
@@ -250,8 +256,11 @@ export default function CreateForm({ choreId }: { choreId: string }) {
                         field.onChange(v?.value || null);
                       }}
                       defaultValue={{
-                        label: weekdayMap[new String(chore.weekday) as any],
-                        value: new String(chore.weekday) as any
+                        label:
+                          weekdayMap[
+                            new String(chore.weekday) as keyof typeof weekdayMap
+                          ],
+                        value: new String(chore.weekday) as typeof field.value
                       }}
                       isMulti={false}
                     />
@@ -287,8 +296,13 @@ export default function CreateForm({ choreId }: { choreId: string }) {
                         field.onChange(v?.value || null);
                       }}
                       defaultValue={{
-                        label: monthdayMap[new String(chore.monthday) as any],
-                        value: new String(chore.monthday) as any
+                        label:
+                          monthdayMap[
+                            new String(
+                              chore.monthday
+                            ) as keyof typeof monthdayMap
+                          ],
+                        value: new String(chore.monthday) as typeof field.value
                       }}
                       isMulti={false}
                     />

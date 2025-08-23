@@ -106,8 +106,8 @@ export default function ReminderEmail({ chores }: { chores: ChoreMinimal[] }) {
                   You have no chores due today or overdue!
                 </Text>
                 <Text className="text-center text-lg">
-                  Honestly, this might've been sent by mistake. Let me know if
-                  you got this email.
+                  Honestly, this might&apos;ve been sent by mistake. Let me know
+                  if you got this email.
                 </Text>
               </>
             )}

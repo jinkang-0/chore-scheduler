@@ -19,7 +19,7 @@ const schema = z.object({
 
 export default function EditNameForm() {
   const { data: session, update: updateSession } = useSession();
-  if (!session?.user) return redirect("/login");
+  if (!session?.user) redirect("/login");
 
   const searchParams = useSearchParams();
   const edit = searchParams.get("edit");
@@ -32,17 +32,20 @@ export default function EditNameForm() {
     }
   });
 
-  const onSubmit = useCallback(async (data: z.infer<typeof schema>) => {
-    await updateUsername(data.name);
-    await updateSession();
-    router.replace("/preferences");
-  }, []);
+  const onSubmit = useCallback(
+    async (data: z.infer<typeof schema>) => {
+      await updateUsername(data.name);
+      await updateSession();
+      router.replace("/preferences");
+    },
+    [router, updateSession]
+  );
 
   useEffect(() => {
     if (edit !== "name") {
       reset();
     }
-  }, [edit]);
+  }, [edit, reset]);
 
   return (
     <CustomDialog

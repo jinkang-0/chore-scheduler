@@ -6,9 +6,13 @@ export const intervalOptions = [
   { value: "MONTHLY", label: "Monthly" }
 ] as const;
 
-export const intervalMap = Object.fromEntries(
-  intervalOptions.map((option) => [option.value, option.label])
-);
+type IntervalOptionValues = (typeof intervalOptions)[number]["value"];
+type IntervalOptionLabels = (typeof intervalOptions)[number]["label"];
+
+export const intervalMap = intervalOptions.reduce((acc, option) => {
+  acc[option.value] = option.label;
+  return acc;
+}, {} as Record<IntervalOptionValues, IntervalOptionLabels>);
 
 export const weekdayOptions = [
   { value: null, label: "No specific day" },
@@ -21,9 +25,15 @@ export const weekdayOptions = [
   { value: "6", label: "Saturday" }
 ] as const;
 
-export const weekdayMap = Object.fromEntries(
-  weekdayOptions.map((option) => [option.value, option.label])
-);
+type WeekdayOptionValues =
+  | Exclude<(typeof weekdayOptions)[number]["value"], null>
+  | "null";
+type WeekdayOptionLabels = (typeof weekdayOptions)[number]["label"];
+
+export const weekdayMap = weekdayOptions.reduce((acc, option) => {
+  acc[new String(option.value) as WeekdayOptionValues] = option.label;
+  return acc;
+}, {} as Record<WeekdayOptionValues, WeekdayOptionLabels>);
 
 export const monthdayOptions = [
   { value: null, label: "No specific day" },
@@ -57,9 +67,15 @@ export const monthdayOptions = [
   { value: "28", label: "day 28" }
 ] as const;
 
-export const monthdayMap = Object.fromEntries(
-  monthdayOptions.map((option) => [option.value, option.label])
-);
+type MonthdayOptionValues =
+  | Exclude<(typeof monthdayOptions)[number]["value"], null>
+  | "null";
+type MonthdayOptionLabels = (typeof monthdayOptions)[number]["label"];
+
+export const monthdayMap = monthdayOptions.reduce((acc, option) => {
+  acc[new String(option.value) as MonthdayOptionValues] = option.label;
+  return acc;
+}, {} as Record<MonthdayOptionValues, MonthdayOptionLabels>);
 
 export const getPeoplePoolOptions = async () => {
   const users = await getWhitelistedPeople();
