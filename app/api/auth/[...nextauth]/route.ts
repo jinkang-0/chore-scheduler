@@ -1,8 +1,10 @@
 import NextAuth from "next-auth";
 import { authConfig } from "@/lib/config/auth";
 
-export const runtime = "nodejs";
+export async function GET() {
+  return new Response("API is reachable");
+}
 
 const handler = NextAuth(authConfig);
 
-export { handler as GET, handler as POST };
+export { handler as POST };
