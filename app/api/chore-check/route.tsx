@@ -3,13 +3,13 @@ import { sendEmail } from "@/api/messaging/email";
 import ReminderEmail from "@/components/emails/reminder";
 import { ChoreMinimal } from "@/types/types";
 import { render } from "@react-email/components";
+import { NextRequest } from "next/server";
 
-export async function GET(request: Request) {
-  // verify api key
-  const apiKey = request.headers.get("Authorization")?.replace("Bearer ", "");
-  if (apiKey !== process.env.API_KEY) {
+export async function GET(request: NextRequest) {
+  // verify secret
+  const authHeader = request.headers.get("authorization");
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`)
     return new Response("Unauthorized", { status: 401 });
-  }
 
   const dueChores = await getChoresDueToday();
 
