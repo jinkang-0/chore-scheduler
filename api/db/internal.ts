@@ -1,4 +1,4 @@
-import { drizzle, PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
 if (!process.env.DATABASE_URL) {
