@@ -1,5 +1,5 @@
-import { getChores } from "@/api/db";
-import { sendEmail } from "@/api/messaging/email";
+import { getChores } from "@/api/actions";
+import { sendEmail } from "@/api/actions";
 import ReminderEmail from "@/components/emails/reminder";
 import { ChoreMinimal } from "@/types/types";
 import { render } from "@react-email/components";

@@ -20,7 +20,7 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { DayPicker, DayPickerDropdown } from "../ui/day-picker";
-import { createChore } from "@/api/db";
+import { createChore } from "@/api/actions";
 
 const schema = z
   .object({

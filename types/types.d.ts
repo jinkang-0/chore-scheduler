@@ -3,7 +3,7 @@ import {
   choresTable,
   choreUserTable,
   userTable
-} from "@/api/db/schema";
+} from "@/lib/schema";
 
 type Chore = typeof choresTable.$inferSelect;
 type ChoreLog = typeof choreLogTable.$inferSelect;

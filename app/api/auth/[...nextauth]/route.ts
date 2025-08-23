@@ -1,5 +1,5 @@
 import NextAuth from "next-auth";
-import { authConfig } from "@/api/auth/config";
+import { authConfig } from "@/lib/config/auth";
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
   throw new Error(

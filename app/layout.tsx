@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { getServerSession } from "next-auth";
-import { authConfig } from "@/api/auth/config";
+import { authConfig } from "@/lib/config/auth";
 import SessionProviderClient from "@/context/session";
 
 export const metadata: Metadata = {

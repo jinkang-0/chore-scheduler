@@ -1,11 +1,11 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { db } from "../db/internal";
+import { db } from "./db";
 import {
   accountsTable,
   sessionsTable,
   userTable,
   whitelistedUsers
-} from "../db/schema";
+} from "../schema";
 import GoogleProvider from "next-auth/providers/google";
 import { AuthOptions } from "next-auth";
 import { eq } from "drizzle-orm";
@@ -20,8 +20,11 @@ if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
 export const authConfig: AuthOptions = {
   adapter: DrizzleAdapter(db, {
     // typecasting to avoid type complaints on RLS
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
     usersTable: userTable as any,
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
     accountsTable: accountsTable as any,
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
     sessionsTable: sessionsTable as any
   }) as Adapter,
   providers: [

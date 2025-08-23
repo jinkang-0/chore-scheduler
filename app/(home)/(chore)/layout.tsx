@@ -1,4 +1,4 @@
-import { getChores } from "@/api/db";
+import { getChores } from "@/api/actions";
 import { ChoreStateProvider } from "@/context/chore-state";
 import { ChoreWithQueue } from "@/types/types";
 

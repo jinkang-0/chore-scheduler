@@ -3,13 +3,8 @@
 import { useChoreState } from "@/context/chore-state";
 import { formatDate } from "@/lib/utils";
 import { cva } from "class-variance-authority";
-import {
-  redirect,
-  usePathname,
-  useRouter,
-  useSearchParams
-} from "next/navigation";
-import { useCallback, useMemo } from "react";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
+import { useCallback } from "react";
 
 const cardStyles = cva(
   "flex gap-2 items-center p-4 rounded-lg w-full cursor-pointer hover:bg-white/5 transition-colors text-left",

@@ -1,4 +1,4 @@
-import { authConfig } from "@/api/auth/config";
+import { authConfig } from "@/lib/config/auth";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 

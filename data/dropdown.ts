@@ -1,4 +1,4 @@
-import { getWhitelistedPeople } from "@/api/db";
+import { getWhitelistedPeople } from "@/api/actions";
 
 export const intervalOptions = [
   { value: "DAILY", label: "Daily" },

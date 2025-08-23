@@ -24,7 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { DayPicker, DayPickerDropdown } from "../ui/day-picker";
 import { useChoreState } from "@/context/chore-state";
-import { updateChore } from "@/api/db";
+import { updateChore } from "@/api/actions";
 
 const schema = z.object({
   title: z.string().min(1, "Title is required"),
