@@ -67,7 +67,3 @@ export const authConfig: AuthOptions = {
     updateAge: 24 * 60 * 60 // 24 hours
   }
 };
-
-export const getServerAuthSession = async () => {
-  return await getServerSession(authConfig);
-};

@@ -1,6 +1,6 @@
 "use server";
 
-import { eq, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import {
   choreLogTable,
   choresTable,
@@ -8,52 +8,25 @@ import {
   whitelistedUsers
 } from "./schema";
 import { db } from "./internal";
-import { Chore, ChoreWithLogs, ChoreWithQueue } from "@/types/types";
+import { ChoreWithLogs, ChoreWithQueue } from "@/types/types";
 
 /**
  * Get all chores from the database.
  */
-export async function getChores() {
+export async function getChores(options?: { dueToday?: boolean }) {
   const query = sql`
     WITH n AS (
       SELECT * FROM ${choreUserTable} AS cu
       JOIN ${whitelistedUsers} AS u ON cu.user_id = u.id
     )
-    SELECT c.*, json_agg(json_build_object('name', n.name, 'id', n.id) ORDER BY n.time_enqueued) AS queue
+    SELECT c.*, json_agg(json_build_object('name', n.name, 'id', n.id, 'email', n.email) ORDER BY n.time_enqueued) AS queue
     FROM ${choresTable} AS c
     LEFT JOIN n ON c.id = n.chore_id
     GROUP BY c.id
+    ${options?.dueToday ? sql`HAVING c.due_date < NOW()` : sql``}
   `;
 
   return (await db.execute(query)) as unknown as ChoreWithQueue[];
-}
-
-export async function getChoresDueToday() {
-  const query = sql`
-    WITH n AS (
-      SELECT * FROM ${choreUserTable} AS cu
-      JOIN ${whitelistedUsers} AS u ON cu.user_id = u.id
-    )
-    SELECT c.*, array_agg(n.email ORDER BY n.time_enqueued) AS queue
-    FROM ${choresTable} AS c
-    LEFT JOIN n ON c.id = n.chore_id
-    GROUP BY c.id
-    HAVING c.due_date < NOW()
-  `;
-
-  return (await db.execute(query)) as unknown as (Chore & {
-    queue: string[];
-  })[];
-}
-
-/**
- * Get all logs for a specific chore by its ID.
- */
-export async function getLogsForChore(choreId: string) {
-  return await db
-    .select()
-    .from(choreLogTable)
-    .where(eq(choreLogTable.chore_id, choreId));
 }
 
 /**

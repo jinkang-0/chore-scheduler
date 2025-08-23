@@ -1,4 +1,4 @@
-import { getChoresDueToday } from "@/api/db";
+import { getChores } from "@/api/db";
 import { sendEmail } from "@/api/messaging/email";
 import ReminderEmail from "@/components/emails/reminder";
 import { ChoreMinimal } from "@/types/types";
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`)
     return new Response("Unauthorized", { status: 401 });
 
-  const dueChores = await getChoresDueToday();
+  const dueChores = await getChores({ dueToday: true });
 
   const assigned: Record<string, ChoreMinimal[]> = dueChores.reduce(
     (prev, curr) => {
@@ -23,10 +23,10 @@ export async function GET(request: NextRequest) {
       };
 
       const assignedTo = curr.queue[curr.passIndex % curr.queue.length];
-      if (!prev[assignedTo]) {
-        prev[assignedTo] = [];
+      if (!prev[assignedTo.email]) {
+        prev[assignedTo.email] = [];
       }
-      prev[assignedTo].push(chore);
+      prev[assignedTo.email].push(chore);
 
       return prev;
     },
