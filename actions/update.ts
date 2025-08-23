@@ -1,11 +1,6 @@
 "use server";
 
-import {
-  arrayEquality,
-  normalizeDate,
-  semanticJoin,
-  shuffle
-} from "@/lib/utils";
+import { arrayEquality, normalizeDate, semanticJoin } from "@/lib/utils";
 import { db } from "../lib/config/db";
 import {
   choreLogTable,
@@ -14,140 +9,11 @@ import {
   userTable,
   whitelistedUsers
 } from "../lib/schema";
-import {
-  ChoreInterval,
-  ChoreLog,
-  ChoreWithLogs,
-  ChoreWithQueue
-} from "@/types/types";
+import { ChoreLog, ChoreWithQueue } from "@/types/types";
 import { revalidatePath } from "next/cache";
-import { monthdayOptions, weekdayOptions } from "@/data/dropdown";
 import { authConfig } from "../lib/config/auth";
 import { getServerSession } from "next-auth";
 import { and, eq, inArray, sql } from "drizzle-orm";
-import { nodemailerTransponder } from "@/lib/config/messaging";
-
-//
-// EMAIL functions
-//
-
-if (!process.env.SMTP_SENDER_NAME || !process.env.SMTP_SENDER_EMAIL)
-  throw new Error(
-    "SMTP_SENDER_NAME and SMTP_SENDER_EMAIL must be set in the environment variables"
-  );
-
-export async function sendEmail({
-  to,
-  subject,
-  html
-}: {
-  to: string;
-  subject: string;
-  html: string;
-}) {
-  return await nodemailerTransponder.sendMail({
-    from: {
-      name: process.env.SMTP_SENDER_NAME!,
-      address: process.env.SMTP_SENDER_EMAIL!
-    },
-    to,
-    subject,
-    html
-  });
-}
-
-//
-// CREATE functions
-//
-
-export async function createChore(chore: {
-  title: string;
-  interval: ChoreInterval;
-  dueDate: Date;
-  peoplePool: string[];
-  assignTo: string;
-  emoji: string;
-  weekday: (typeof weekdayOptions)[number]["value"] | null;
-  monthday: (typeof monthdayOptions)[number]["value"] | null;
-}) {
-  // ensure assignTo is in the people pool
-  if (!chore.peoplePool.includes(chore.assignTo)) {
-    throw new Error("Assigned person must be in the people pool");
-  }
-
-  // get authenticated user
-  const session = await getServerSession(authConfig);
-  if (!session?.user?.id) {
-    throw new Error("User not authenticated");
-  }
-
-  // get assigned to user
-  const [assignedUser] = await db
-    .select()
-    .from(whitelistedUsers)
-    .where(eq(whitelistedUsers.id, chore.assignTo));
-  const assignedName = assignedUser?.name || "Unknown";
-
-  // randomize people pool
-  const peoplePoolWithoutAssignTo = shuffle(
-    chore.peoplePool.filter((userId) => userId !== chore.assignTo)
-  );
-  const pool = [chore.assignTo, ...peoplePoolWithoutAssignTo];
-
-  // create queue
-  const today = new Date();
-  const todayMs = today.getTime();
-
-  await db.transaction(async (tx) => {
-    // insert chore
-    const [newChore] = await tx
-      .insert(choresTable)
-      .values({
-        due_date: normalizeDate(chore.dueDate),
-        title: chore.title,
-        interval: chore.interval,
-        emoji: chore.emoji,
-        passIndex: 0,
-        weekday: chore.weekday ? Number(chore.weekday) : null,
-        monthday: chore.monthday ? Number(chore.monthday) : null
-      })
-      .returning();
-
-    // insert queue
-    const queue = pool.map((userId, idx) => ({
-      chore_id: newChore.id,
-      user_id: userId,
-      time_enqueued: new Date(todayMs + idx * 1000)
-    }));
-
-    await tx.insert(choreUserTable).values(queue);
-
-    // insert log
-    await tx.insert(choreLogTable).values([
-      {
-        chore_id: newChore.id,
-        user_id: session.user.whitelist_id,
-        type: "INFO",
-        message: `Chore created by ${session.user.name}`,
-        timestamp: today
-      },
-      {
-        chore_id: newChore.id,
-        user_id: chore.assignTo,
-        type: "INFO",
-        message: `Chore assigned to ${assignedName}`,
-        timestamp: new Date(todayMs + 1000)
-      }
-    ]);
-  });
-
-  // revalidate main page
-  revalidatePath("/");
-}
-
-//
-// UPDATE functions
-//
 
 /**
  * Helper function to get a chore with its queue by ID.
@@ -490,63 +356,4 @@ export async function updateEmailNotifications(enabled: boolean) {
     .where(eq(userTable.id, session.user.id));
 
   revalidatePath("/");
-}
-
-//
-// GET functions
-//
-
-/**
- * Get all chores from the database.
- */
-export async function getChores(options?: { dueToday?: boolean }) {
-  const query = sql`
-    WITH n AS (
-      SELECT * FROM ${choreUserTable} AS cu
-      JOIN ${whitelistedUsers} AS u ON cu.user_id = u.id
-    )
-    SELECT c.*, json_agg(json_build_object('name', n.name, 'id', n.id, 'email', n.email) ORDER BY n.time_enqueued) AS queue
-    FROM ${choresTable} AS c
-    LEFT JOIN n ON c.id = n.chore_id
-    GROUP BY c.id
-    ${options?.dueToday ? sql`HAVING c.due_date < NOW()` : sql``}
-  `;
-
-  return (await db.execute(query)) as unknown as ChoreWithQueue[];
-}
-
-/**
- * Get all users from the database.
- */
-export async function getWhitelistedPeople() {
-  return await db
-    .select({
-      id: whitelistedUsers.id,
-      name: whitelistedUsers.name
-    })
-    .from(whitelistedUsers);
-}
-
-/**
- * Get all logs
- */
-export async function getAllLogs() {
-  const query = sql`
-    SELECT
-      c.id,
-      c.title,
-      c.emoji,
-      json_agg(json_build_object(
-        'id', cl.id, 
-        'user_id', cl.user_id,
-        'timestamp', cl.timestamp,
-        'message', cl.message,
-        'type', cl.type
-      ) ORDER BY cl.timestamp DESC) AS logs
-    FROM ${choresTable} AS c
-    LEFT JOIN ${choreLogTable} AS cl ON c.id = cl.chore_id
-    GROUP BY c.id
-  `;
-
-  return (await db.execute(query)) as unknown as ChoreWithLogs[];
 }

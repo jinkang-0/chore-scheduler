@@ -11,7 +11,7 @@ import { useSession } from "next-auth/react";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import CustomDialog from "../ui/dialog";
 import { Dialog, VisuallyHidden } from "radix-ui";
-import { updateUsername } from "@/api/actions";
+import { updateUsername } from "@/actions";
 
 const schema = z.object({
   name: z.string().min(1, "Name is required")

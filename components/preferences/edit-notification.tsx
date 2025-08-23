@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import CustomCheckbox from "../ui/checkbox";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import { updateEmailNotifications } from "@/api/actions";
+import { updateEmailNotifications } from "@/actions";
 import { LuLoaderCircle } from "react-icons/lu";
 import { BsCloudCheck } from "react-icons/bs";
 

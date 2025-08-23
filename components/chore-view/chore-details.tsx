@@ -13,7 +13,7 @@ import {
 } from "react-icons/lu";
 import { ButtonAsync, ButtonLink } from "../ui/button";
 import { useCallback, useMemo } from "react";
-import { incrementChorePassIndex, markChoreAsDone } from "@/api/actions";
+import { incrementChorePassIndex, markChoreAsDone } from "@/actions";
 import { weekdays } from "@/data/datetime";
 import { useSession } from "next-auth/react";
 

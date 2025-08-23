@@ -1,4 +1,4 @@
-import { getAllLogs } from "@/api/actions";
+import { getAllLogs } from "@/actions";
 import { LogStateProvider } from "@/context/log-state";
 import { ChoreWithLogs } from "@/types/types";
 
