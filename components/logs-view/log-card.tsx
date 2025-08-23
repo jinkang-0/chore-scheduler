@@ -2,7 +2,7 @@
 
 import { useLogState } from "@/context/log-state";
 import { cva } from "class-variance-authority";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo } from "react";
 
 const cardStyles = cva(
@@ -23,15 +23,12 @@ export default function LogCard({ choreId }: { choreId: string }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const id = useMemo(() => {
-    const parts = pathname.split("/");
-    if (parts.length < 3) return null;
-    return parts[2];
-  }, [pathname]);
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
 
   const handleClick = useCallback(() => {
-    if (id === choreId) router.replace("/logs");
-    else router.push(`/logs/${choreId}`);
+    if (id === choreId) router.replace("?");
+    else router.push(`?id=${choreId}`);
   }, [router, id, choreId]);
 
   if (!chore) {

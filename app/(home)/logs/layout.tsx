@@ -1,5 +1,4 @@
 import { getAllLogs } from "@/api/db";
-import LogHome from "@/components/logs-view/main-view";
 import { LogStateProvider } from "@/context/log-state";
 import { ChoreWithLogs } from "@/types/types";
 
@@ -14,9 +13,5 @@ export default async function LogsLayout({
     logMap[chore.id] = chore;
   });
 
-  return (
-    <LogStateProvider logMap={logMap}>
-      <LogHome>{children}</LogHome>
-    </LogStateProvider>
-  );
+  return <LogStateProvider logMap={logMap}>{children}</LogStateProvider>;
 }

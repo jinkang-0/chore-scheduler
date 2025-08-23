@@ -53,7 +53,7 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-export default function CreateForm({ choreId }: { choreId: string }) {
+export default function ChoreEditForm({ choreId }: { choreId: string }) {
   // get defaults
   const { choreMap } = useChoreState();
   const chore = choreMap[choreId];
@@ -100,7 +100,7 @@ export default function CreateForm({ choreId }: { choreId: string }) {
   }, []);
 
   const handleCancel = useCallback(() => {
-    router.replace(`/${choreId}/view`, { scroll: false });
+    router.replace(`/?mode=view&id=${choreId}`, { scroll: false });
   }, [router, choreId]);
 
   const handleEdit = useCallback(
@@ -116,7 +116,7 @@ export default function CreateForm({ choreId }: { choreId: string }) {
         peoplePool: values.peoplePool
       });
 
-      router.replace(`/${choreId}/view`, { scroll: false });
+      router.replace(`/?mode=view&id=${choreId}`, { scroll: false });
     },
     [router, choreId]
   );

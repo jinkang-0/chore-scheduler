@@ -3,7 +3,12 @@
 import { useChoreState } from "@/context/chore-state";
 import { formatDate } from "@/lib/utils";
 import { cva } from "class-variance-authority";
-import { redirect, usePathname, useRouter } from "next/navigation";
+import {
+  redirect,
+  usePathname,
+  useRouter,
+  useSearchParams
+} from "next/navigation";
 import { useCallback, useMemo } from "react";
 
 const cardStyles = cva(
@@ -27,26 +32,16 @@ export default function ChoreCard({
 }) {
   const { choreMap } = useChoreState();
   const chore = choreMap[choreId];
+  if (!chore) redirect("/");
 
   const router = useRouter();
-  const pathname = usePathname();
-
-  const id = useMemo(() => {
-    const parts = pathname.split("/");
-    if (parts.length < 2) return null;
-    return parts[1];
-  }, [pathname]);
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
 
   const handleClick = useCallback(() => {
     if (id === choreId) router.replace("/");
-    else router.push(`/${choreId}/view`);
+    else router.push(`/?mode=view&id=${choreId}`);
   }, [router, id, choreId]);
-
-  if (!chore) return redirect("/");
-
-  if (!chore) {
-    return <div className="animate-pulse bg-w11 rounded-lg w-full h-10" />;
-  }
 
   return (
     <button

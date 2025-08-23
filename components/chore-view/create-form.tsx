@@ -55,7 +55,7 @@ const schema = z
       });
   });
 
-export default function CreateForm() {
+export default function ChoreCreateForm() {
   // states
   const [emoji, setEmoji] = useState("🚀");
   const [pickerOpen, setPickerOpen] = useState(false);

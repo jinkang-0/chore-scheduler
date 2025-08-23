@@ -118,7 +118,8 @@ export async function markChoreAsDone(choreId: string) {
   const userIndex = chore.queue.findIndex(
     (user) => user.id === session.user.whitelist_id
   );
-  const nextUser = chore.queue[userIndex === 0 ? 1 : 0];
+  const nextUser =
+    chore.queue[userIndex === 0 && chore.queue.length > 1 ? 1 : 0];
   const assignedUser = chore.queue[chore.passIndex % chore.queue.length];
   const userIsAssigned = session.user.whitelist_id === assignedUser.id;
   const now = Date.now();

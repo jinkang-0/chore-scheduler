@@ -1,7 +1,7 @@
 "use client";
 
 import { LuX } from "react-icons/lu";
-import { Button } from "../ui/button";
+import { Button } from "./button";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 

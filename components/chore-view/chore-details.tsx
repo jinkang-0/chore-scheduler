@@ -62,7 +62,7 @@ export default function ChoreDetails({ choreId }: { choreId: string }) {
           <p className="text-2xl">{chore.emoji}</p>
           <h3 className="text-2xl font-semibold">{chore.title}</h3>
         </div>
-        <ButtonLink href={`/${choreId}/edit`} variant="ghost">
+        <ButtonLink href={`/?mode=edit&id=${choreId}`} variant="ghost">
           <LuPencil className="text-w11" size={20} />
         </ButtonLink>
       </header>
