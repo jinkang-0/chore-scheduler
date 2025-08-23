@@ -83,7 +83,6 @@ export const userTable = pgTable("user", {
   whitelist_id: uuid().references(() => whitelistedUsers.id, {
     onDelete: "cascade"
   }),
-  is_onboarded: boolean().notNull().default(false),
   email_notifications: boolean().notNull().default(true)
 }).enableRLS();
 

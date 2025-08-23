@@ -11,8 +11,5 @@ export default async function HomeLayout({
   const session = await getServerSession(authConfig);
   if (!session) return redirect("/login");
 
-  // ensure user has onboarded
-  if (!session.user.is_onboarded) return redirect("/onboarding");
-
   return children;
 }

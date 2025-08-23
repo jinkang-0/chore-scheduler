@@ -7,7 +7,7 @@ import {
   whitelistedUsers
 } from "../db/schema";
 import GoogleProvider from "next-auth/providers/google";
-import { AuthOptions, getServerSession } from "next-auth";
+import { AuthOptions } from "next-auth";
 import { eq } from "drizzle-orm";
 import { Adapter } from "next-auth/adapters";
 
