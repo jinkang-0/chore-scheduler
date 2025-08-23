@@ -191,23 +191,6 @@ export async function updateUsername(name: string) {
 }
 
 /**
- * Set the user as having completed the onboarding process.
- */
-export async function setOnboarded() {
-  const session = await getServerSession(authConfig);
-  if (!session?.user?.id) {
-    throw new Error("User not authenticated");
-  }
-
-  await db
-    .update(userTable)
-    .set({ is_onboarded: true })
-    .where(eq(userTable.id, session.user.id));
-
-  revalidatePath("/");
-}
-
-/**
  * Increment the pass index of a chore.
  */
 export async function incrementChorePassIndex(choreId: string) {
