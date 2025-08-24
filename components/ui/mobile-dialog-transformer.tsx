@@ -2,8 +2,9 @@
 
 import { LuX } from "react-icons/lu";
 import { Button } from "./button";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Dialog } from "radix-ui";
 
 /**
  * Uses media queries to transform children to a dialog
@@ -17,28 +18,66 @@ export default function MobileDialogTransformer({
   returnHref?: string;
 }) {
   const router = useRouter();
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handleMdBreakpoint = (e: MediaQueryListEvent) => {
+      setDialogOpen(e.matches);
+    };
+
+    const mdBreakpoint = window.matchMedia("(max-width: 48rem)");
+    mdBreakpoint.addEventListener("change", handleMdBreakpoint);
+
+    // initial check
+    if (mdBreakpoint.matches) {
+      setDialogOpen(true);
+    }
+
+    return () => {
+      mdBreakpoint.removeEventListener("change", handleMdBreakpoint);
+    };
+  }, []);
 
   const handleCancel = useCallback(() => {
     router.replace(returnHref, { scroll: false });
   }, [router, returnHref]);
 
-  return (
-    <div className="fixed md:static inset-0 w-full h-screen md:h-full bg-black/50 md:bg-transparent grid place-items-center p-4 py-16 md:p-0 z-10 md:z-0 overflow-y-auto">
-      <div className="w-full md:h-full flex flex-col">
-        <div className="md:hidden flex justify-end items-center mb-2">
-          <div className="rounded-full bg-w4">
-            <Button
-              variant="ghost"
-              className="text-w11 rounded-full!"
-              onClick={handleCancel}
-            >
-              <LuX size={24} />
-            </Button>
-          </div>
-        </div>
+  if (dialogOpen) {
+    return (
+      <Dialog.Root open={true} onOpenChange={handleCancel}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 w-full h-full bg-black/50 z-10 p-4 py-16 grid place-items-center overflow-y-auto">
+            <Dialog.Content className="w-full md:h-full flex flex-col">
+              <Dialog.Title className="sr-only">Dialog</Dialog.Title>
+              <Dialog.Description className="sr-only">
+                Dialog
+              </Dialog.Description>
+              <Dialog.Close asChild>
+                <div className="flex justify-end items-center mb-2">
+                  <div className="rounded-full bg-w4">
+                    <Button
+                      variant="ghost"
+                      className="text-w11 rounded-full!"
+                      onClick={handleCancel}
+                    >
+                      <LuX size={24} />
+                    </Button>
+                  </div>
+                </div>
+              </Dialog.Close>
+              {children}
+            </Dialog.Content>
+          </Dialog.Overlay>
+        </Dialog.Portal>
+      </Dialog.Root>
+    );
+  }
 
-        {children}
-      </div>
+  return (
+    <div className="w-full h-full grid place-items-center overflow-y-auto">
+      <div className="w-full h-full flex flex-col">{children}</div>
     </div>
   );
 }
