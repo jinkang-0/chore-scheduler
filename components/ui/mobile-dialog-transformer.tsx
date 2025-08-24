@@ -23,7 +23,7 @@ export default function MobileDialogTransformer({
   }, [router, returnHref]);
 
   return (
-    <div className="fixed md:static inset-0 w-full h-svh md:h-full bg-black/50 md:bg-transparent grid place-items-center p-4 py-16 md:p-0 z-10 md:z-0 overflow-y-auto">
+    <div className="fixed md:static inset-0 w-full h-screen md:h-full bg-black/50 md:bg-transparent grid place-items-center p-4 py-16 md:p-0 z-10 md:z-0 overflow-y-auto">
       <div className="w-full md:h-full flex flex-col">
         <div className="md:hidden flex justify-end items-center mb-2">
           <div className="rounded-full bg-w4">
