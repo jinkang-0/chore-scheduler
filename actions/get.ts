@@ -5,28 +5,52 @@ import {
   choreLogTable,
   choresTable,
   choreUserTable,
+  userTable,
   whitelistedUsers
 } from "../lib/schema";
-import { ChoreWithLogs, ChoreWithQueue } from "@/types/types";
+import { Chore, ChoreWithLogs, ChoreWithQueue } from "@/types/types";
 import { sql } from "drizzle-orm";
 
 /**
  * Get all chores from the database.
  */
-export async function getChores(options?: { dueToday?: boolean }) {
+export async function getChores() {
   const query = sql`
     WITH n AS (
       SELECT * FROM ${choreUserTable} AS cu
       JOIN ${whitelistedUsers} AS u ON cu.user_id = u.id
     )
-    SELECT c.*, json_agg(json_build_object('name', n.name, 'id', n.id, 'email', n.email) ORDER BY n.time_enqueued) AS queue
+    SELECT c.*, json_agg(json_build_object('name', n.name, 'id', n.id) ORDER BY n.time_enqueued) AS queue
     FROM ${choresTable} AS c
     LEFT JOIN n ON c.id = n.chore_id
     GROUP BY c.id
-    ${options?.dueToday ? sql`HAVING c.due_date < NOW()` : sql``}
   `;
 
   return (await db.execute(query)) as unknown as ChoreWithQueue[];
+}
+
+export async function getChoresDueToday() {
+  const query = sql`
+    WITH n AS (
+      SELECT
+        cu.*,
+        CASE
+          WHEN u.email_notifications THEN u.email
+          WHEN NOT u.email_notifications THEN NULL
+        END AS email
+      FROM ${choreUserTable} AS cu
+      JOIN ${userTable} AS u ON cu.user_id = u.whitelist_id
+    )
+    SELECT c.*, array_agg(n.email ORDER BY n.time_enqueued) AS queue
+    FROM ${choresTable} AS c
+    LEFT JOIN n ON c.id = n.chore_id
+    GROUP BY c.id
+    HAVING c.due_date <= NOW()
+  `;
+
+  return (await db.execute(query)) as unknown as (Chore & {
+    queue: string[];
+  })[];
 }
 
 /**

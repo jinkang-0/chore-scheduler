@@ -1,4 +1,4 @@
-import { getChores } from "@/actions";
+import { getChoresDueToday } from "@/actions";
 import { sendEmail } from "@/actions";
 import ReminderEmail from "@/components/emails/reminder";
 import { ChoreMinimal } from "@/types/types";
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`)
     return new Response("Unauthorized", { status: 401 });
 
-  const dueChores = await getChores({ dueToday: true });
+  const dueChores = await getChoresDueToday();
   if (dueChores.length === 0)
     return new Response("No chores due today, no emails sent");
 
@@ -25,15 +25,20 @@ export async function GET(request: NextRequest) {
       };
 
       const assignedTo = curr.queue[curr.passIndex % curr.queue.length];
-      if (!prev[assignedTo.email]) {
-        prev[assignedTo.email] = [];
+      if (!assignedTo || assignedTo === "NULL") return prev;
+
+      if (!prev[assignedTo]) {
+        prev[assignedTo] = [];
       }
-      prev[assignedTo.email].push(chore);
+      prev[assignedTo].push(chore);
 
       return prev;
     },
     {} as Record<string, ChoreMinimal[]>
   );
+
+  if (Object.keys(assigned).length === 0)
+    return new Response("Users assigned have no email notifications enabled");
 
   const emails = await Promise.all(
     Object.entries(assigned).map(async ([userEmail, chores]) => ({

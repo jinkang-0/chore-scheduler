@@ -15,7 +15,6 @@ type ChoreLogType = ChoreLog["type"];
 interface UserMinimal {
   id: string;
   name: string;
-  email: string;
 }
 
 interface ChoreMinimal {

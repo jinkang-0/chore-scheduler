@@ -102,6 +102,7 @@ export default function EditNotification() {
           id="email"
           name="email"
           onCheckedChange={handleCheckedChange}
+          defaultChecked={session.user.email_notifications}
         />
         <span className="text-lg">receive email chore reminders</span>
       </label>
