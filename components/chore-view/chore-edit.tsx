@@ -1,6 +1,6 @@
 "use client";
 
-import { DropdownMenu } from "radix-ui";
+import { Dialog, DropdownMenu } from "radix-ui";
 import { useCallback, useMemo, useState } from "react";
 import { Button } from "../ui/button";
 import CustomEmojiPicker from "../ui/emoji-picker";
@@ -25,6 +25,8 @@ import z from "zod";
 import { DayPicker, DayPickerDropdown } from "../ui/day-picker";
 import { useChoreState } from "@/context/chore-state";
 import { updateChore } from "@/actions";
+import CustomDialog from "../ui/dialog";
+import { deleteChore } from "@/actions/delete";
 
 const schema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -98,6 +100,11 @@ export default function ChoreEditForm({ choreId }: { choreId: string }) {
   const togglePicker = useCallback(() => {
     setPickerOpen((prev) => !prev);
   }, []);
+
+  const handleDelete = useCallback(async () => {
+    await deleteChore(choreId);
+    router.replace("/");
+  }, [choreId, router]);
 
   const handleCancel = useCallback(() => {
     router.replace(`/?mode=view&id=${choreId}`, { scroll: false });
@@ -207,7 +214,7 @@ export default function ChoreEditForm({ choreId }: { choreId: string }) {
           </div>
 
           {/* due date select */}
-          <div className="ml-auto flex gap-2 md:gap-4 items-center flex-wrap">
+          <div className="ml-auto flex gap-2 md:gap-4 items-center flex-wrap mt-4 md:mt-0">
             <div className="flex gap-2 items-center text-w10">
               <LuClock size={24} />
               <p>first due on</p>
@@ -237,7 +244,7 @@ export default function ChoreEditForm({ choreId }: { choreId: string }) {
 
           {/* reoccurrence select for weekly */}
           {interval === "WEEKLY" && (
-            <div className="ml-auto flex gap-2 md:gap-4 items-center flex-wrap">
+            <div className="ml-auto flex gap-2 md:gap-4 items-center flex-wrap mt-4 md:mt-0">
               <div className="flex gap-2 items-center text-w10">
                 <LuCalendar size={24} />
                 <p>reoccur on</p>
@@ -350,10 +357,51 @@ export default function ChoreEditForm({ choreId }: { choreId: string }) {
         </div>
 
         {/* buttons */}
-        <div className="flex justify-between items-center mt-auto pt-12">
-          <Button variant="ghost" onClick={handleCancel} type="button">
-            <p className="text-w11">cancel</p>
-          </Button>
+        <div className="flex not-md:flex-col md:justify-between md:items-end mt-auto gap-4 pt-12">
+          <div className="flex flex-col gap-2 items-baseline">
+            <CustomDialog
+              trigger={
+                <Button
+                  variant="ghost"
+                  className="text-danger justify-start"
+                  type="button"
+                >
+                  <p className="text-danger">delete chore</p>
+                </Button>
+              }
+            >
+              <Dialog.Title className="font-medium text-xl">
+                Are you sure you want to delete this chore?
+              </Dialog.Title>
+              <Dialog.Description className="text-w11">
+                This action cannot be undone.
+              </Dialog.Description>
+              <div className="mt-4 flex justify-end gap-4">
+                <Dialog.Close asChild>
+                  <Button variant="ghost" type="button">
+                    <p className="text-w11">Cancel</p>
+                  </Button>
+                </Dialog.Close>
+                <Button
+                  variant="danger"
+                  onClick={() => {
+                    handleDelete();
+                  }}
+                  type="button"
+                >
+                  Delete
+                </Button>
+              </div>
+            </CustomDialog>
+            <Button
+              variant="ghost"
+              className="justify-start"
+              onClick={handleCancel}
+              type="button"
+            >
+              <p className="text-w11">cancel</p>
+            </Button>
+          </div>
           <Button
             variant="primary"
             type="submit"
