@@ -357,3 +357,20 @@ export async function updateEmailNotifications(enabled: boolean) {
 
   revalidatePath("/");
 }
+
+/**
+ * Set the user as having completed the onboarding process.
+ */
+export async function setOnboarded() {
+  const session = await getServerSession(authConfig);
+  if (!session?.user?.id) {
+    throw new Error("User not authenticated");
+  }
+
+  await db
+    .update(userTable)
+    .set({ is_onboarded: true })
+    .where(eq(userTable.id, session.user.id));
+
+  revalidatePath("/");
+}

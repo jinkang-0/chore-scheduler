@@ -2,17 +2,17 @@ import { authConfig } from "@/lib/config/auth";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
-export default async function HomeLayout({
+export default async function OnboardingLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
-  // ensure user is authenticated
+  // check if user is authenticated
   const session = await getServerSession(authConfig);
   if (!session) return redirect("/login");
 
-  // redirect to onboarding if not onboarded
-  if (!session.user.is_onboarded) return redirect("/onboarding");
+  // check if user has onboarded
+  if (session.user.is_onboarded) return redirect("/");
 
   return children;
 }
