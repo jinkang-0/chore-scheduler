@@ -34,8 +34,8 @@ export default function ChoreCard({
   const id = searchParams.get("id");
 
   const handleClick = useCallback(() => {
-    if (id === choreId) router.replace("/");
-    else router.push(`/?mode=view&id=${choreId}`);
+    if (id === choreId) router.replace("/", { scroll: false });
+    else router.push(`/?mode=view&id=${choreId}`, { scroll: false });
   }, [router, id, choreId]);
 
   return (

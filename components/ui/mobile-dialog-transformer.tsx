@@ -19,7 +19,7 @@ export default function MobileDialogTransformer({
   const router = useRouter();
 
   const handleCancel = useCallback(() => {
-    router.replace(returnHref);
+    router.replace(returnHref, { scroll: false });
   }, [router, returnHref]);
 
   return (

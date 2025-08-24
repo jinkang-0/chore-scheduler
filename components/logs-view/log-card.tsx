@@ -26,8 +26,8 @@ export default function LogCard({ choreId }: { choreId: string }) {
   const id = searchParams.get("id");
 
   const handleClick = useCallback(() => {
-    if (id === choreId) router.replace("?");
-    else router.push(`?id=${choreId}`);
+    if (id === choreId) router.replace("?", { scroll: false });
+    else router.push(`?id=${choreId}`, { scroll: false });
   }, [router, id, choreId]);
 
   if (!chore) {

@@ -88,7 +88,7 @@ export default function ChoreCreateForm() {
   }, []);
 
   const handleCancel = useCallback(() => {
-    router.replace("/");
+    router.replace("/", { scroll: false });
   }, [router]);
 
   const handleCreate = useCallback(

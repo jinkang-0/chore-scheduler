@@ -103,7 +103,7 @@ export default function ChoreEditForm({ choreId }: { choreId: string }) {
 
   const handleDelete = useCallback(async () => {
     await deleteChore(choreId);
-    router.replace("/");
+    router.replace("/", { scroll: false });
   }, [choreId, router]);
 
   const handleCancel = useCallback(() => {
