@@ -1,0 +1,16 @@
+{
+  "short_name": "Chore Scheduler",
+  "name": "Chore Scheduler",
+  "description": "A simple chore scheduling app to manage household tasks.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#292929",
+  "theme_color": "#f9f9f9",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}
