@@ -12,6 +12,8 @@ export async function GET(request: NextRequest) {
     return new Response("Unauthorized", { status: 401 });
 
   const dueChores = await getChores({ dueToday: true });
+  if (dueChores.length === 0)
+    return new Response("No chores due today, no emails sent");
 
   const assigned: Record<string, ChoreMinimal[]> = dueChores.reduce(
     (prev, curr) => {
