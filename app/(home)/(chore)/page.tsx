@@ -1,16 +1,16 @@
 "use client";
 
-import ChoreCard from "@/components/chore-view/chore-card";
-import { useChoreState } from "@/context/chore-state";
-import { LuPlus } from "react-icons/lu";
-import { ButtonLink } from "@/components/ui/button";
-import { formatDateShort } from "@/lib/utils";
-import TabsGroup from "@/components/ui/tabs-group";
 import { useSearchParams } from "next/navigation";
-import MobileDialogTransformer from "@/components/ui/mobile-dialog-transformer";
-import ChoreCreateForm from "@/components/chore-view/create-form";
-import ChoreEditForm from "@/components/chore-view/chore-edit";
+import { LuPlus } from "react-icons/lu";
+import ChoreCard from "@/components/chore-view/chore-card";
 import ChoreDetails from "@/components/chore-view/chore-details";
+import ChoreEditForm from "@/components/chore-view/chore-edit";
+import ChoreCreateForm from "@/components/chore-view/create-form";
+import { ButtonLink } from "@/components/ui/button";
+import MobileDialogTransformer from "@/components/ui/mobile-dialog-transformer";
+import TabsGroup from "@/components/ui/tabs-group";
+import { useChoreState } from "@/context/chore-state";
+import { formatDateShort } from "@/lib/utils";
 
 export default function ChorePage() {
   const { choreMap } = useChoreState();

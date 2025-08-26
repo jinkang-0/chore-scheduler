@@ -1,15 +1,15 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { db } from "./db";
+import { eq } from "drizzle-orm";
+import type { AuthOptions } from "next-auth";
+import type { Adapter } from "next-auth/adapters";
+import GoogleProvider from "next-auth/providers/google";
 import {
   accountsTable,
   sessionsTable,
   userTable,
   whitelistedUsers
 } from "../schema";
-import GoogleProvider from "next-auth/providers/google";
-import { AuthOptions } from "next-auth";
-import { eq } from "drizzle-orm";
-import { Adapter } from "next-auth/adapters";
+import { db } from "./db";
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
   throw new Error(
@@ -24,11 +24,11 @@ if (!process.env.NEXTAUTH_SECRET) {
 export const authConfig: AuthOptions = {
   adapter: DrizzleAdapter(db, {
     // typecasting to avoid type complaints on RLS
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
+    // biome-ignore lint/suspicious/noExplicitAny: <Cannot typecast to specific type>
     usersTable: userTable as any,
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
+    // biome-ignore lint/suspicious/noExplicitAny: <Cannot typecast to specific type>
     accountsTable: accountsTable as any,
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
+    // biome-ignore lint/suspicious/noExplicitAny: <Cannot typecast to specific type>
     sessionsTable: sessionsTable as any
   }) as Adapter,
   providers: [

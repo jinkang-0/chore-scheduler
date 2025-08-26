@@ -1,5 +1,7 @@
 "use server";
 
+import { sql } from "drizzle-orm";
+import type { Chore, ChoreWithLogs, ChoreWithQueue } from "@/types/types";
 import { db } from "../lib/config/db";
 import {
   choreLogTable,
@@ -8,8 +10,6 @@ import {
   userTable,
   whitelistedUsers
 } from "../lib/schema";
-import { Chore, ChoreWithLogs, ChoreWithQueue } from "@/types/types";
-import { sql } from "drizzle-orm";
 
 /**
  * Get all chores from the database.

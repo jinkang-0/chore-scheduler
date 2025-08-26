@@ -1,11 +1,16 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import type { Emoji } from "frimousse";
+import { redirect, useRouter } from "next/navigation";
 import { Dialog, DropdownMenu } from "radix-ui";
 import { useCallback, useMemo, useState } from "react";
-import { Button } from "../ui/button";
-import CustomEmojiPicker from "../ui/emoji-picker";
-import { Emoji } from "frimousse";
-import Input from "../ui/input";
+import { Controller, useForm } from "react-hook-form";
+import { LuCalendar, LuClock, LuSave } from "react-icons/lu";
+import z from "zod";
+import { updateChore } from "@/actions";
+import { deleteChore } from "@/actions/delete";
+import { useChoreState } from "@/context/chore-state";
 import {
   getPeoplePoolOptions,
   intervalMap,
@@ -15,18 +20,13 @@ import {
   weekdayMap,
   weekdayOptions
 } from "@/data/dropdown";
-import { CustomSelect, CustomSelectAsync } from "../ui/select";
-import { LuCalendar, LuClock, LuSave } from "react-icons/lu";
-import { ChoreInterval } from "@/types/types";
-import { redirect, useRouter } from "next/navigation";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
+import type { ChoreInterval } from "@/types/types";
+import { Button } from "../ui/button";
 import { DayPicker, DayPickerDropdown } from "../ui/day-picker";
-import { useChoreState } from "@/context/chore-state";
-import { updateChore } from "@/actions";
 import CustomDialog from "../ui/dialog";
-import { deleteChore } from "@/actions/delete";
+import CustomEmojiPicker from "../ui/emoji-picker";
+import Input from "../ui/input";
+import { CustomSelect, CustomSelectAsync } from "../ui/select";
 
 const schema = z.object({
   title: z.string().min(1, "Title is required"),

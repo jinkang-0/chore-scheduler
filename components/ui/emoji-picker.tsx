@@ -1,5 +1,37 @@
-import { cn } from "@/lib/utils";
+import type {
+  EmojiPickerListCategoryHeaderProps,
+  EmojiPickerListEmojiProps,
+  EmojiPickerListRowProps
+} from "frimousse";
 import { EmojiPicker } from "frimousse";
+import { cn } from "@/lib/utils";
+
+const CategoryHeader = ({
+  category,
+  ...props
+}: EmojiPickerListCategoryHeaderProps) => (
+  <div
+    className="bg-white px-3 pt-3 pb-1.5 font-medium text-neutral-600 text-xs dark:bg-neutral-900 dark:text-neutral-400"
+    {...props}
+  >
+    {category.label}
+  </div>
+);
+
+const Row = ({ children, ...props }: EmojiPickerListRowProps) => (
+  <div className="scroll-my-1.5 px-1.5" {...props}>
+    {children}
+  </div>
+);
+
+const Emoji = ({ emoji, ...props }: EmojiPickerListEmojiProps) => (
+  <button
+    className="flex size-10 text-xl items-center justify-center rounded-md data-[active]:bg-neutral-100 dark:data-[active]:bg-neutral-800"
+    {...props}
+  >
+    {emoji.emoji}
+  </button>
+);
 
 export default function CustomEmojiPicker({
   className,
@@ -24,27 +56,9 @@ export default function CustomEmojiPicker({
         <EmojiPicker.List
           className="select-none pb-1.5"
           components={{
-            CategoryHeader: ({ category, ...props }) => (
-              <div
-                className="bg-white px-3 pt-3 pb-1.5 font-medium text-neutral-600 text-xs dark:bg-neutral-900 dark:text-neutral-400"
-                {...props}
-              >
-                {category.label}
-              </div>
-            ),
-            Row: ({ children, ...props }) => (
-              <div className="scroll-my-1.5 px-1.5" {...props}>
-                {children}
-              </div>
-            ),
-            Emoji: ({ emoji, ...props }) => (
-              <button
-                className="flex size-10 text-xl items-center justify-center rounded-md data-[active]:bg-neutral-100 dark:data-[active]:bg-neutral-800"
-                {...props}
-              >
-                {emoji.emoji}
-              </button>
-            )
+            CategoryHeader,
+            Row,
+            Emoji
           }}
         />
       </EmojiPicker.Viewport>

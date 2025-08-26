@@ -1,6 +1,6 @@
-import { cn } from "@/lib/utils";
 import { Checkbox as RadixCheckbox } from "radix-ui";
 import { LuCheck } from "react-icons/lu";
+import { cn } from "@/lib/utils";
 
 export default function CustomCheckbox({
   className,

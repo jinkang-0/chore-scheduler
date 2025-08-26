@@ -1,7 +1,7 @@
 "use client";
 
-import { ChoreWithQueue } from "@/types/types";
 import { createContext, useContext } from "react";
+import type { ChoreWithQueue } from "@/types/types";
 
 interface ChoreStateContextValue {
   choreMap: Record<string, ChoreWithQueue>;

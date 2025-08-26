@@ -1,12 +1,12 @@
 import {
-  text,
-  pgTable,
-  uuid,
-  pgEnum,
-  timestamp,
-  primaryKey,
+  boolean,
   integer,
-  boolean
+  pgEnum,
+  pgTable,
+  primaryKey,
+  text,
+  timestamp,
+  uuid
 } from "drizzle-orm/pg-core";
 
 export const choreIntervalEnum = pgEnum("chore_interval", [

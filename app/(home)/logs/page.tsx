@@ -1,11 +1,11 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
+import LogCard from "@/components/logs-view/log-card";
+import LogDetails from "@/components/logs-view/log-details";
+import MobileDialogTransformer from "@/components/ui/mobile-dialog-transformer";
 import TabsGroup from "@/components/ui/tabs-group";
 import { useLogState } from "@/context/log-state";
-import LogCard from "@/components/logs-view/log-card";
-import { useSearchParams } from "next/navigation";
-import MobileDialogTransformer from "@/components/ui/mobile-dialog-transformer";
-import LogDetails from "@/components/logs-view/log-details";
 
 export default function LogsPage() {
   const { logMap } = useLogState();

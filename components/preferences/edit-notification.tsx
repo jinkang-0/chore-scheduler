@@ -1,12 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
-import CustomCheckbox from "../ui/checkbox";
-import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import { updateEmailNotifications } from "@/actions";
-import { LuLoaderCircle } from "react-icons/lu";
+import { useSession } from "next-auth/react";
+import { useId, useRef, useState } from "react";
 import { BsCloudCheck } from "react-icons/bs";
+import { LuLoaderCircle } from "react-icons/lu";
+import { updateEmailNotifications } from "@/actions";
+import CustomCheckbox from "../ui/checkbox";
 
 const autosaveInterval = 500;
 const iconWaitDelay = 1000;
@@ -28,6 +28,8 @@ function AutosaveIndicator({ status }: { status: "" | "saving" | "saved" }) {
 export default function EditNotification() {
   const { data: session, update: updateSession } = useSession();
   if (!session) redirect("/login");
+
+  const emailId = useId();
 
   const values = useRef({
     current: session.user.email_notifications,
@@ -95,11 +97,11 @@ export default function EditNotification() {
         <AutosaveIndicator status={status} />
       </div>
       <label
-        htmlFor="email"
+        htmlFor={emailId}
         className="select-none flex items-center gap-2 mt-4"
       >
         <CustomCheckbox
-          id="email"
+          id={emailId}
           name="email"
           onCheckedChange={handleCheckedChange}
           defaultChecked={session.user.email_notifications}

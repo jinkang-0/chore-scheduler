@@ -1,9 +1,10 @@
-import { cn, formatDate } from "@/lib/utils";
 import { DropdownMenu } from "radix-ui";
-import { DayPickerProps, DayPicker as LibDayPicker } from "react-day-picker";
-import { LuCalendar } from "react-icons/lu";
+import type { DayPickerProps } from "react-day-picker";
+import { DayPicker as LibDayPicker } from "react-day-picker";
 import defaultClassNames from "react-day-picker/style.module.css";
+import { LuCalendar } from "react-icons/lu";
 import styles from "@/lib/day-picker.module.css";
+import { cn, formatDate } from "@/lib/utils";
 
 export function DayPicker({
   fixedWeeks = true,

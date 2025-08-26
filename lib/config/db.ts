@@ -7,7 +7,7 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-const client = postgres(process.env.DATABASE_URL!, { prepare: false });
+const client = postgres(process.env.DATABASE_URL, { prepare: false });
 
 /**
  * Drizzle ORM database instance for PostgreSQL.

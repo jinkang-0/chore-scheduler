@@ -33,15 +33,13 @@
     "zod": "^4.0.17"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
+    "@biomejs/biome": "2.2.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/nodemailer": "^7.0.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "drizzle-kit": "^0.31.4",
-    "eslint": "^9",
-    "eslint-config-next": "15.4.6",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
