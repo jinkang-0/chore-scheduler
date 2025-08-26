@@ -1,7 +1,5 @@
 ## Chore Scheduler
 
-**WORK IN PROGRESS**
-
 A simple web app to manage, organize, and schedule chores.
 
 Built with TypeScript, React, and Next.js.

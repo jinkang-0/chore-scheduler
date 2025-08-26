@@ -8,7 +8,7 @@ import { LuLoaderCircle } from "react-icons/lu";
 import { updateEmailNotifications } from "@/actions";
 import CustomCheckbox from "../ui/checkbox";
 
-const autosaveInterval = 500;
+const autosaveInterval = 200;
 const iconWaitDelay = 1000;
 
 function AutosaveIndicator({ status }: { status: "" | "saving" | "saved" }) {
