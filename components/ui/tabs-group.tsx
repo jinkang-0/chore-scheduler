@@ -1,9 +1,9 @@
 "use client";
 
-import { LuClipboardList, LuScroll, LuUser } from "react-icons/lu";
-import Tab from "./tab";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
+import { LuClipboardList, LuScroll, LuUser } from "react-icons/lu";
+import Tab from "./tab";
 
 export default function TabsGroup() {
   const pathname = usePathname();

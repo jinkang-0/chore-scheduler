@@ -1,13 +1,13 @@
 "use client";
 
+import { redirect } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
+import { useCallback } from "react";
+import { LuMail, LuPencil } from "react-icons/lu";
 import EditNameForm from "@/components/preferences/edit-name";
 import EditNotification from "@/components/preferences/edit-notification";
 import { ButtonAsync, ButtonLink } from "@/components/ui/button";
 import TabsGroup from "@/components/ui/tabs-group";
-import { signOut, useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
-import { useCallback } from "react";
-import { LuMail, LuPencil } from "react-icons/lu";
 
 export default function PreferencesPage() {
   const { data: session } = useSession();

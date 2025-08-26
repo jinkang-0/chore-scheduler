@@ -1,6 +1,12 @@
 "use server";
 
+import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+import { getServerSession } from "next-auth";
+import type { monthdayOptions, weekdayOptions } from "@/data/dropdown";
 import { normalizeDate, shuffle } from "@/lib/utils";
+import type { ChoreInterval } from "@/types/types";
+import { authConfig } from "../lib/config/auth";
 import { db } from "../lib/config/db";
 import {
   choreLogTable,
@@ -8,12 +14,6 @@ import {
   choreUserTable,
   whitelistedUsers
 } from "../lib/schema";
-import { ChoreInterval } from "@/types/types";
-import { revalidatePath } from "next/cache";
-import { monthdayOptions, weekdayOptions } from "@/data/dropdown";
-import { authConfig } from "../lib/config/auth";
-import { getServerSession } from "next-auth";
-import { eq } from "drizzle-orm";
 
 export async function createChore(chore: {
   title: string;

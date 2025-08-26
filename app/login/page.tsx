@@ -1,9 +1,9 @@
 "use client";
 
-import IconGoogle from "@/components/icons/google";
-import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
+import IconGoogle from "@/components/icons/google";
+import { Button } from "@/components/ui/button";
 
 function getErrorMessage(error: string | null): string {
   switch (error) {

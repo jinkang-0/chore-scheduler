@@ -1,6 +1,6 @@
 import { getAllLogs } from "@/actions";
 import { LogStateProvider } from "@/context/log-state";
-import { ChoreWithLogs } from "@/types/types";
+import type { ChoreWithLogs } from "@/types/types";
 
 export default async function LogsLayout({
   children

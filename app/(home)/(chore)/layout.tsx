@@ -1,6 +1,6 @@
 import { getChores } from "@/actions";
 import { ChoreStateProvider } from "@/context/chore-state";
-import { ChoreWithQueue } from "@/types/types";
+import type { ChoreWithQueue } from "@/types/types";
 
 export default async function ChoreLayout({
   children

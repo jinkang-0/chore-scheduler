@@ -1,10 +1,10 @@
 "use client";
 
-import { useChoreState } from "@/context/chore-state";
-import { formatDate } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
+import { useChoreState } from "@/context/chore-state";
+import { formatDate } from "@/lib/utils";
 
 const cardStyles = cva(
   "flex gap-2 items-center p-4 rounded-lg w-full cursor-pointer hover:bg-white/5 transition-colors text-left",
@@ -40,6 +40,7 @@ export default function ChoreCard({
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       className={cardStyles({ selected: choreId === id })}
     >

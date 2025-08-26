@@ -1,6 +1,11 @@
 "use server";
 
+import { and, eq, inArray, sql } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+import { getServerSession } from "next-auth";
 import { arrayEquality, normalizeDate, semanticJoin } from "@/lib/utils";
+import type { ChoreLog, ChoreWithQueue } from "@/types/types";
+import { authConfig } from "../lib/config/auth";
 import { db } from "../lib/config/db";
 import {
   choreLogTable,
@@ -9,11 +14,6 @@ import {
   userTable,
   whitelistedUsers
 } from "../lib/schema";
-import { ChoreLog, ChoreWithQueue } from "@/types/types";
-import { revalidatePath } from "next/cache";
-import { authConfig } from "../lib/config/auth";
-import { getServerSession } from "next-auth";
-import { and, eq, inArray, sql } from "drizzle-orm";
 
 /**
  * Helper function to get a chore with its queue by ID.
@@ -89,7 +89,7 @@ export async function markChoreAsDone(choreId: string) {
       const thisYear = today.getFullYear();
       const thisMonth = today.getMonth();
       const nextMonth =
-        nextYear == thisYear
+        nextYear === thisYear
           ? nextDueDate.getMonth()
           : nextDueDate.getMonth() + 12;
 
@@ -177,12 +177,12 @@ export async function updateUsername(name: string) {
 
   // update names
   await db.transaction(async (tx) => {
-    await db
+    await tx
       .update(whitelistedUsers)
       .set({ name })
       .where(eq(whitelistedUsers.id, session.user.whitelist_id));
 
-    await db
+    await tx
       .update(userTable)
       .set({ name })
       .where(eq(userTable.id, session.user.id));

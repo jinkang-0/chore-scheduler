@@ -1,9 +1,9 @@
 "use server";
 
-import { db } from "@/lib/config/db";
-import { choresTable } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { db } from "@/lib/config/db";
+import { choresTable } from "@/lib/schema";
 
 /**
  * Delete a chore by its ID.

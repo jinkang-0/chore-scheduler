@@ -1,10 +1,10 @@
 "use client";
 
-import { LuX } from "react-icons/lu";
-import { Button } from "./button";
-import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Dialog } from "radix-ui";
+import { useCallback, useEffect, useState } from "react";
+import { LuX } from "react-icons/lu";
+import { Button } from "./button";
 
 /**
  * Uses media queries to transform children to a dialog

@@ -1,6 +1,7 @@
 "use client";
 
-import Select, { StylesConfig } from "react-select";
+import type { StylesConfig } from "react-select";
+import Select from "react-select";
 import AsyncSelect from "react-select/async";
 
 function getSelectStyles<T, M extends boolean>(): StylesConfig<T, M> {

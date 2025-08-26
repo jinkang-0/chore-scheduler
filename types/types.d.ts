@@ -1,30 +1,30 @@
-import {
+import type {
   choreLogTable,
   choresTable,
   choreUserTable,
   userTable
 } from "@/lib/schema";
 
-type Chore = typeof choresTable.$inferSelect;
-type ChoreLog = typeof choreLogTable.$inferSelect;
-type User = typeof userTable.$inferSelect;
-type ChoreUser = typeof choreUserTable.$inferSelect;
-type ChoreInterval = Chore["interval"];
-type ChoreLogType = ChoreLog["type"];
+export type Chore = typeof choresTable.$inferSelect;
+export type ChoreLog = typeof choreLogTable.$inferSelect;
+export type User = typeof userTable.$inferSelect;
+export type ChoreUser = typeof choreUserTable.$inferSelect;
+export type ChoreInterval = Chore["interval"];
+export type ChoreLogType = ChoreLog["type"];
 
-interface UserMinimal {
+export interface UserMinimal {
   id: string;
   name: string;
 }
 
-interface ChoreMinimal {
+export interface ChoreMinimal {
   id: string;
   title: string;
   emoji: string;
   due_date: Date;
 }
 
-interface LogEntry {
+export interface LogEntry {
   id: string;
   user_id: string | null;
   timestamp: string;
@@ -32,18 +32,23 @@ interface LogEntry {
   type: ChoreLogType;
 }
 
-interface ChoreWithLogs extends ChoreMinimal {
+export interface ChoreWithLogs extends ChoreMinimal {
   logs: LogEntry[];
 }
 
-interface ChoreWithQueue extends Chore {
+export interface ChoreWithQueue extends Chore {
   queue: UserMinimal[];
 }
 
-type ChoreViewIntent = "create" | "update" | "view";
-type ButtonVariant = "glass" | "primary" | "ghost" | "secondary" | "danger";
+export type ChoreViewIntent = "create" | "update" | "view";
+export type ButtonVariant =
+  | "glass"
+  | "primary"
+  | "ghost"
+  | "secondary"
+  | "danger";
 
-interface DropdownOption {
+export interface DropdownOption {
   label: string;
   value: string;
 }

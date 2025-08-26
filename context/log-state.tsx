@@ -1,7 +1,7 @@
 "use client";
 
-import { ChoreWithLogs } from "@/types/types";
 import { createContext, useContext } from "react";
+import type { ChoreWithLogs } from "@/types/types";
 
 type LogMapType = Record<string, ChoreWithLogs>;
 

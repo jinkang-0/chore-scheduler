@@ -1,9 +1,8 @@
-import { getChoresDueToday } from "@/actions";
-import { sendEmail } from "@/actions";
-import ReminderEmail from "@/components/emails/reminder";
-import { ChoreMinimal } from "@/types/types";
 import { render } from "@react-email/components";
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
+import { getChoresDueToday, sendEmail } from "@/actions";
+import ReminderEmail from "@/components/emails/reminder";
+import type { ChoreMinimal } from "@/types/types";
 
 export async function GET(request: NextRequest) {
   // verify secret

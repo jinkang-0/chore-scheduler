@@ -1,9 +1,9 @@
 "use client";
 
-import { ButtonVariant } from "@/types/types";
 import { cva } from "class-variance-authority";
 import Link from "next/link";
 import { useCallback, useState } from "react";
+import type { ButtonVariant } from "@/types/types";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant: ButtonVariant;

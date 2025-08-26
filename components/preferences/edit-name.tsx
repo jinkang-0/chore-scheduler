@@ -1,17 +1,17 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { Dialog, VisuallyHidden } from "radix-ui";
 import { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import z from "zod";
-import { Button, ButtonLink } from "../ui/button";
 import { LuCheck } from "react-icons/lu";
-import Input from "../ui/input";
-import { useSession } from "next-auth/react";
-import { redirect, useRouter, useSearchParams } from "next/navigation";
-import CustomDialog from "../ui/dialog";
-import { Dialog, VisuallyHidden } from "radix-ui";
+import z from "zod";
 import { updateUsername } from "@/actions";
+import { Button, ButtonLink } from "../ui/button";
+import CustomDialog from "../ui/dialog";
+import Input from "../ui/input";
 
 const schema = z.object({
   name: z.string().min(1, "Name is required")

@@ -1,7 +1,8 @@
 "use client";
 
-import { useChoreState } from "@/context/chore-state";
 import { redirect } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useCallback, useMemo } from "react";
 import {
   LuCalendar,
   LuCheck,
@@ -11,11 +12,10 @@ import {
   LuUser,
   LuUsers
 } from "react-icons/lu";
-import { ButtonAsync, ButtonLink } from "../ui/button";
-import { useCallback, useMemo } from "react";
 import { incrementChorePassIndex, markChoreAsDone } from "@/actions";
+import { useChoreState } from "@/context/chore-state";
 import { weekdays } from "@/data/datetime";
-import { useSession } from "next-auth/react";
+import { ButtonAsync, ButtonLink } from "../ui/button";
 
 export default function ChoreDetails({ choreId }: { choreId: string }) {
   const { data: session } = useSession();

@@ -1,5 +1,3 @@
-import { optionallyPluralize } from "@/lib/utils";
-import { ChoreMinimal } from "@/types/types";
 import {
   Body,
   Button,
@@ -13,6 +11,8 @@ import {
   Tailwind,
   Text
 } from "@react-email/components";
+import { optionallyPluralize } from "@/lib/utils";
+import type { ChoreMinimal } from "@/types/types";
 
 export default function ReminderEmail({ chores }: { chores: ChoreMinimal[] }) {
   const today = new Date();

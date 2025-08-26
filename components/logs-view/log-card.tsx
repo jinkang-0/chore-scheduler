@@ -1,9 +1,9 @@
 "use client";
 
-import { useLogState } from "@/context/log-state";
 import { cva } from "class-variance-authority";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo } from "react";
+import { useLogState } from "@/context/log-state";
 
 const cardStyles = cva(
   "flex gap-2 items-center p-4 py-6 rounded-lg w-full cursor-pointer hover:bg-white/5 transition-colors text-left",
@@ -36,6 +36,7 @@ export default function LogCard({ choreId }: { choreId: string }) {
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       className={cardStyles({ selected: choreId === id })}
     >
