@@ -15,6 +15,7 @@ import {
 import { incrementChorePassIndex, markChoreAsDone } from "@/actions";
 import { useChoreState } from "@/context/chore-state";
 import { weekdays } from "@/data/datetime";
+import { formatDateShort } from "@/lib/utils";
 import { ButtonAsync, ButtonLink } from "../ui/button";
 
 export default function ChoreDetails({ choreId }: { choreId: string }) {
@@ -67,6 +68,11 @@ export default function ChoreDetails({ choreId }: { choreId: string }) {
           <LuPencil className="text-w11" size={20} />
         </ButtonLink>
       </header>
+
+      <div className="text-w11 flex gap-2 items-center">
+        <LuCalendar size={20} />
+        <p>Due {formatDateShort(chore.due_date)}</p>
+      </div>
 
       <div className="text-w11 flex gap-2 items-center">
         <LuRepeat size={20} />
