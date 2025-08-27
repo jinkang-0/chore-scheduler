@@ -113,11 +113,12 @@ export function arrayEquality<T>(a: T[], b: T[]): boolean {
 }
 
 /**
- * Normalizes a date to the start of the day (midnight).
+ * Normalizes a date to 7 AM UTC, which is midnight PST/PDT.
+ * This helps avoid timezone issues when storing dates in the database.
  */
 export function normalizeDate(date: Date | string): Date {
   const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
+  d.setHours(7, 0, 0, 0);
   return d;
 }
 

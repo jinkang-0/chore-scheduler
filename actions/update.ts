@@ -4,7 +4,7 @@ import { and, eq, inArray, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { arrayEquality, normalizeDate, semanticJoin } from "@/lib/utils";
-import type { ChoreLog, ChoreWithQueue } from "@/types/types";
+import type { ChoreInterval, ChoreLog, ChoreWithQueue } from "@/types/types";
 import { authConfig } from "../lib/config/auth";
 import { db } from "../lib/config/db";
 import {
@@ -101,6 +101,8 @@ export async function markChoreAsDone(choreId: string) {
     // thus guaranteeing incrementing the month will not overflow to the month after
 
     revalidatePath("/");
+  } else {
+    throw new Error("Invalid chore interval");
   }
 
   // determine logs to add
@@ -239,13 +241,13 @@ export async function incrementChorePassIndex(choreId: string) {
 }
 
 /**
- *
+ * Update a chore's details.
  */
 export async function updateChore(chore: {
   id: string;
   title: string;
   emoji: string;
-  interval: "DAILY" | "WEEKLY" | "MONTHLY";
+  interval: ChoreInterval;
   weekday?: number | null;
   monthday?: number | null;
   dueDate: Date;
