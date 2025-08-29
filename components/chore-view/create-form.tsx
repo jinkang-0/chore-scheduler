@@ -139,7 +139,7 @@ export default function ChoreCreateForm() {
             </DropdownMenu.Content>
           </DropdownMenu.Root>
           <Input
-            variant="contentEditable"
+            variant="textbox"
             className="text-2xl font-semibold w-full"
             placeholder="Chore title"
             defaultValue="Untitled chore"

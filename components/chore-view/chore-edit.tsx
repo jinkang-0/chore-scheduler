@@ -158,7 +158,7 @@ export default function ChoreEditForm({ choreId }: { choreId: string }) {
             </DropdownMenu.Content>
           </DropdownMenu.Root>
           <Input
-            variant="contentEditable"
+            variant="textbox"
             className="text-2xl font-semibold w-full"
             placeholder="Chore title"
             defaultValue={chore.title || "Untitled chore"}
