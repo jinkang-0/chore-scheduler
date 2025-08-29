@@ -40,17 +40,17 @@ export default function CustomEmojiPicker({
   return (
     <EmojiPicker.Root
       className={cn(
-        "isolate flex h-[368px] w-fit flex-col bg-white dark:bg-neutral-900 rounded-lg",
+        "isolate flex h-[368px] w-fit flex-col bg-neutral-900 rounded-lg",
         className
       )}
       {...props}
     >
-      <EmojiPicker.Search className="z-10 mx-2 mt-2 appearance-none rounded-md bg-neutral-100 px-2.5 py-2 text-sm dark:bg-neutral-800" />
+      <EmojiPicker.Search className="z-10 mx-2 mt-2 appearance-none rounded-md px-2.5 py-2 text-sm text-white bg-neutral-800" />
       <EmojiPicker.Viewport className="relative flex-1 outline-hidden">
-        <EmojiPicker.Loading className="absolute inset-0 flex items-center justify-center text-neutral-400 text-sm dark:text-neutral-500">
+        <EmojiPicker.Loading className="absolute inset-0 flex items-center justify-center text-sm text-neutral-500">
           Loading…
         </EmojiPicker.Loading>
-        <EmojiPicker.Empty className="absolute inset-0 flex items-center justify-center text-neutral-400 text-sm dark:text-neutral-500">
+        <EmojiPicker.Empty className="absolute inset-0 flex items-center justify-center text-sm text-neutral-500">
           No emoji found.
         </EmojiPicker.Empty>
         <EmojiPicker.List
