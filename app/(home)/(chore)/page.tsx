@@ -97,6 +97,7 @@ export default function ChorePage() {
                 prefetch={false}
                 className="w-full"
                 href="/?mode=create"
+                scroll={false}
               >
                 <LuPlus size={24} />
                 Create a chore
