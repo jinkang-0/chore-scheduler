@@ -39,7 +39,8 @@ export async function getChoresDueToday() {
           WHEN NOT u.email_notifications THEN NULL
         END AS email
       FROM ${choreUserTable} AS cu
-      JOIN ${userTable} AS u ON cu.user_id = u.whitelist_id
+      JOIN ${whitelistedUsers} AS wu ON cu.user_id = wu.id
+      LEFT JOIN ${userTable} AS u ON cu.user_id = u.whitelist_id
     )
     SELECT c.*, array_agg(n.email ORDER BY n.time_enqueued) AS queue
     FROM ${choresTable} AS c

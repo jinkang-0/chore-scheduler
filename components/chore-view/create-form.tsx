@@ -217,6 +217,7 @@ export default function ChoreCreateForm() {
                       selected={field.value}
                       onSelect={(value) => field.onChange(value)}
                       disabled={{ before: new Date() }}
+                      required
                     />
                   </DayPickerDropdown>
                   {fieldState.error && (
