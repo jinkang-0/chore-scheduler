@@ -12,7 +12,6 @@ import { updateChore } from "@/actions";
 import { deleteChore } from "@/actions/delete";
 import { useChoreState } from "@/context/chore-state";
 import {
-  getPeoplePoolOptions,
   intervalMap,
   intervalOptions,
   monthdayMap,
@@ -20,6 +19,7 @@ import {
   weekdayMap,
   weekdayOptions
 } from "@/data/dropdown";
+import { usePeoplePoolOptions } from "@/hooks/usePeoplePoolOptions";
 import type { ChoreInterval } from "@/types/types";
 import { Button } from "../ui/button";
 import { DayPicker, DayPickerDropdown } from "../ui/day-picker";
@@ -73,9 +73,12 @@ export default function ChoreEditForm({ choreId }: { choreId: string }) {
     chore.interval
   );
 
+  const { loadOptions, peoplePoolMap, peoplePoolOptions } =
+    usePeoplePoolOptions();
+
   // lib
   const router = useRouter();
-  const { register, control, handleSubmit, formState } = useForm({
+  const { register, control, handleSubmit, formState, setValue } = useForm({
     defaultValues: {
       title: chore.title || "Untitled chore",
       peoplePool: defaultPeoplePool.map((p) => p.value),
@@ -109,6 +112,10 @@ export default function ChoreEditForm({ choreId }: { choreId: string }) {
   const handleCancel = useCallback(() => {
     router.replace(`/?mode=view&id=${choreId}`, { scroll: false });
   }, [router, choreId]);
+
+  const handleAddAll = useCallback(() => {
+    setValue("peoplePool", peoplePoolOptions?.map((p) => p.value) ?? []);
+  }, [peoplePoolOptions, setValue]);
 
   const handleEdit = useCallback(
     async (values: FormValues) => {
@@ -340,7 +347,11 @@ export default function ChoreEditForm({ choreId }: { choreId: string }) {
                   cacheOptions
                   defaultOptions
                   closeMenuOnSelect={false}
-                  loadOptions={getPeoplePoolOptions}
+                  loadOptions={loadOptions}
+                  value={field.value.map((v) => ({
+                    value: v,
+                    label: peoplePoolMap[v]
+                  }))}
                   onChange={(options) => {
                     field.onChange(options.map((opt) => opt.value));
                   }}
@@ -351,6 +362,11 @@ export default function ChoreEditForm({ choreId }: { choreId: string }) {
                     {fieldState.error.message}
                   </p>
                 )}
+                <div className="flex justify-end items-center">
+                  <Button variant="ghost" onClick={handleAddAll} type="button">
+                    <p className="text-w11">add all</p>
+                  </Button>
+                </div>
               </>
             )}
           />
