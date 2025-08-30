@@ -10,11 +10,11 @@ import { LuCalendar, LuClock, LuPlus } from "react-icons/lu";
 import z from "zod";
 import { createChore } from "@/actions";
 import {
-  getPeoplePoolOptions,
   intervalOptions,
   monthdayOptions,
   weekdayOptions
 } from "@/data/dropdown";
+import { usePeoplePoolOptions } from "@/hooks/usePeoplePoolOptions";
 import type { ChoreInterval, DropdownOption } from "@/types/types";
 import { Button } from "../ui/button";
 import { DayPicker, DayPickerDropdown } from "../ui/day-picker";
@@ -68,7 +68,7 @@ export default function ChoreCreateForm() {
 
   // lib
   const router = useRouter();
-  const { register, control, handleSubmit, formState } = useForm({
+  const { register, control, handleSubmit, formState, setValue } = useForm({
     defaultValues: {
       title: "Untitled chore",
       peoplePool: [],
@@ -78,6 +78,11 @@ export default function ChoreCreateForm() {
     resolver: zodResolver(schema)
   });
 
+  // option loader
+  const { loadOptions, peoplePoolMap, peoplePoolOptions } =
+    usePeoplePoolOptions();
+
+  // event handlers
   const handleEmojiPick = useCallback((e: Emoji) => {
     setEmoji(e.emoji);
     setPickerOpen(false);
@@ -90,6 +95,11 @@ export default function ChoreCreateForm() {
   const handleCancel = useCallback(() => {
     router.replace("/", { scroll: false });
   }, [router]);
+
+  const handleAddAll = useCallback(() => {
+    setValue("peoplePool", peoplePoolOptions?.map((p) => p.value) ?? []);
+    setSelectedPeople(peoplePoolOptions ?? []);
+  }, [peoplePoolOptions, setValue]);
 
   const handleCreate = useCallback(
     async (values: z.infer<typeof schema>) => {
@@ -119,7 +129,7 @@ export default function ChoreCreateForm() {
         <div className="flex gap-2">
           <DropdownMenu.Root open={pickerOpen} onOpenChange={setPickerOpen}>
             <DropdownMenu.Trigger asChild>
-              <Button variant="ghost" onClick={togglePicker}>
+              <Button variant="ghost" onClick={togglePicker} type="button">
                 <p className="text-2xl">{emoji}</p>
               </Button>
             </DropdownMenu.Trigger>
@@ -139,7 +149,7 @@ export default function ChoreCreateForm() {
             </DropdownMenu.Content>
           </DropdownMenu.Root>
           <Input
-            variant="contentEditable"
+            variant="textbox"
             className="text-2xl font-semibold w-full"
             placeholder="Chore title"
             defaultValue="Untitled chore"
@@ -301,7 +311,11 @@ export default function ChoreCreateForm() {
                   cacheOptions
                   defaultOptions
                   closeMenuOnSelect={false}
-                  loadOptions={getPeoplePoolOptions}
+                  loadOptions={loadOptions}
+                  value={field.value.map((v) => ({
+                    value: v,
+                    label: peoplePoolMap[v] || ""
+                  }))}
                   onChange={(options) => {
                     field.onChange(options.map((opt) => opt.value));
                     setSelectedPeople(options);
@@ -312,6 +326,11 @@ export default function ChoreCreateForm() {
                     {fieldState.error.message}
                   </p>
                 )}
+                <div className="flex justify-end items-center">
+                  <Button variant="ghost" onClick={handleAddAll} type="button">
+                    <p className="text-w11">add all</p>
+                  </Button>
+                </div>
               </>
             )}
           />
