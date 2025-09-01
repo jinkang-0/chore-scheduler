@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
-import { LuClipboardList, LuScroll, LuUser } from "react-icons/lu";
+import { LuClipboardList, LuScroll, LuSettings } from "react-icons/lu";
 import Tab from "./tab";
 
 export default function TabsGroup() {
@@ -26,7 +26,7 @@ export default function TabsGroup() {
       <Tab
         href="/preferences"
         active={highlightedTab === "preferences"}
-        icon={<LuUser size={24} />}
+        icon={<LuSettings size={24} />}
       />
       <Tab
         href="/logs"
