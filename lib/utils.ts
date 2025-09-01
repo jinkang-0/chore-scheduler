@@ -40,8 +40,8 @@ export function formatDate(date: Date | string): string {
 }
 
 /**
- * Formats a date to a short date string without the year.
- * @example formatDateShort(new Date("2023-01-01")) => "Jan 1"
+ * Formats a date to a short date string with weekday, but not year.
+ * @example formatDateShort(new Date("2023-01-01")) => "Sun, Jan 1"
  */
 export function formatDateShort(date: Date | string): string {
   const d = new Date(date);
@@ -50,6 +50,32 @@ export function formatDateShort(date: Date | string): string {
     day: "numeric",
     weekday: "short"
   });
+}
+
+/**
+ * Formats a date to a short date string with relative hint
+ * @example formatDateShortRelative(new Date("2023-01-01")) => "Sun, Jan 1 (today)"
+ */
+export function formatDateShortRelative(date: Date | string): string {
+  const d = new Date(date);
+  const ds = d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    weekday: "short"
+  });
+  const relativeHint = getRelativeDay(d);
+
+  return `${ds} (${relativeHint})`;
+}
+
+export function getRelativeDay(date: Date | string): string {
+  const today = new Date();
+  const d = new Date(date);
+  const msDiff = d.getTime() - today.getTime();
+  const inFuture = msDiff > 0;
+  const dayDiff = Math.ceil(Math.abs(msDiff) / 1000 / 60 / 60 / 24);
+
+  return `${inFuture ? "" : "-"}${dayDiff}d`;
 }
 
 /**
