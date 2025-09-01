@@ -40,6 +40,10 @@ export interface ChoreWithQueue extends Chore {
   queue: UserMinimal[];
 }
 
+export interface ChoreWithQueueEx extends ChoreWithQueue {
+  includesUser: boolean;
+}
+
 export type ChoreViewIntent = "create" | "update" | "view";
 export type ButtonVariant =
   | "glass"
