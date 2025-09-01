@@ -10,7 +10,7 @@ import { ButtonLink } from "@/components/ui/button";
 import MobileDialogTransformer from "@/components/ui/mobile-dialog-transformer";
 import TabsGroup from "@/components/ui/tabs-group";
 import { useChoreState } from "@/context/chore-state";
-import { formatDateShort } from "@/lib/utils";
+import { formatDateShort, getRelativeDay } from "@/lib/utils";
 
 export default function ChorePage() {
   const { choreMap } = useChoreState();
@@ -82,7 +82,10 @@ export default function ChorePage() {
               sortedDates.map((date) => (
                 <div key={date} className="flex flex-col gap-2 mb-4">
                   <h2 className="text-xl font-semibold">
-                    {formatDateShort(date)}
+                    {formatDateShort(date)}{" "}
+                    <span className="text-lg text-w10">
+                      ({getRelativeDay(date)})
+                    </span>
                   </h2>
                   {groupedChores[date].map((choreId) => (
                     <ChoreCard key={choreId} choreId={choreId} />
