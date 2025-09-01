@@ -1,10 +1,10 @@
 "use client";
 
 import { createContext, useContext } from "react";
-import type { ChoreWithQueue } from "@/types/types";
+import type { ChoreWithQueueEx } from "@/types/types";
 
 interface ChoreStateContextValue {
-  choreMap: Record<string, ChoreWithQueue>;
+  choreMap: Record<string, ChoreWithQueueEx>;
 }
 
 const ChoreStateContext = createContext<ChoreStateContextValue | null>(null);
@@ -23,7 +23,7 @@ export function ChoreStateProvider({
   choreMap
 }: {
   children: React.ReactNode;
-  choreMap: Record<string, ChoreWithQueue>;
+  choreMap: Record<string, ChoreWithQueueEx>;
 }) {
   return (
     <ChoreStateContext.Provider value={{ choreMap }}>

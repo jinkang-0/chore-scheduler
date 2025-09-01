@@ -40,6 +40,10 @@ export interface ChoreWithQueue extends Chore {
   queue: UserMinimal[];
 }
 
+export interface ChoreWithQueueEx extends ChoreWithQueue {
+  includesUser: boolean;
+}
+
 export type ChoreViewIntent = "create" | "update" | "view";
 export type ButtonVariant =
   | "glass"
@@ -52,3 +56,5 @@ export interface DropdownOption {
   label: string;
   value: string;
 }
+
+export type ViewMode = "private" | "global";
