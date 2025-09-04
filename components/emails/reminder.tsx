@@ -14,6 +14,8 @@ import {
 import { optionallyPluralize } from "@/lib/utils";
 import type { ChoreMinimal } from "@/types/types";
 
+const siteUrl = "https://chores.jfang.dev";
+
 export default function ReminderEmail({ chores }: { chores: ChoreMinimal[] }) {
   const today = new Date();
 
@@ -48,7 +50,7 @@ export default function ReminderEmail({ chores }: { chores: ChoreMinimal[] }) {
                   {overdueChores.map((chore) => (
                     <Container key={chore.id} className="mb-4">
                       <Button
-                        href={`https://chore.jfang.dev/?mode=view&id=${chore.id}`}
+                        href={`${siteUrl}/?mode=view&id=${chore.id}`}
                         className="w-full rounded-lg bg-neutral-200 px-4"
                       >
                         <Row>
@@ -79,7 +81,7 @@ export default function ReminderEmail({ chores }: { chores: ChoreMinimal[] }) {
                   {todayChores.map((chore) => (
                     <Container key={chore.id} className="mb-4">
                       <Button
-                        href={`https://chore.jfang.dev/?mode=view&id=${chore.id}`}
+                        href={`${siteUrl}/?mode=view&id=${chore.id}`}
                         className="w-full rounded-lg bg-neutral-200 px-4"
                       >
                         <Row>
@@ -115,7 +117,7 @@ export default function ReminderEmail({ chores }: { chores: ChoreMinimal[] }) {
               <Row>
                 <Column className="flex justify-center">
                   <Button
-                    href="https://chore.jfang.dev"
+                    href={siteUrl}
                     className="mt-8 text-lg px-4 py-2 bg-neutral-800 rounded-lg text-white inline-block mx-auto"
                   >
                     Go to Dashboard
