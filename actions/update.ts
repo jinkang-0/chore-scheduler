@@ -321,7 +321,7 @@ export async function updateChore(chore: {
     // remove removed users from queue
     await tx
       .delete(choreUserTable)
-      .where(inArray(choreUserTable.user_id, removedUsers));
+      .where(and(eq(choreUserTable.chore_id, chore.id), inArray(choreUserTable.user_id, removedUsers)));
 
     // add new users to the queue
     if (newQueue.length > 0) {
