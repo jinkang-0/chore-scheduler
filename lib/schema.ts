@@ -12,6 +12,7 @@ import {
 export const choreIntervalEnum = pgEnum("chore_interval", [
   "DAILY",
   "WEEKLY",
+  "BIWEEKLY",
   "MONTHLY"
 ]);
 
