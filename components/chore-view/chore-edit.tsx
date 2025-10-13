@@ -250,8 +250,8 @@ export default function ChoreEditForm({ choreId }: { choreId: string }) {
             />
           </div>
 
-          {/* reoccurrence select for weekly */}
-          {interval === "WEEKLY" && (
+          {/* reoccurrence select for weekly / biweekly */}
+          {(interval === "WEEKLY" || interval === 'BIWEEKLY') && (
             <div className="ml-auto flex gap-2 md:gap-4 items-center flex-wrap mt-4 md:mt-0">
               <div className="flex gap-2 items-center text-w10">
                 <LuCalendar size={24} />

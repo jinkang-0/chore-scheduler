@@ -101,6 +101,15 @@ export async function markChoreAsDone(choreId: string) {
     // thus guaranteeing incrementing the month will not overflow to the month after
 
     revalidatePath("/");
+  } else if (chore.interval === "BIWEEKLY") {
+    const currentDay = nextDueDate.getDay();
+    const targetDay = chore.weekday || currentDay;
+    const daysUntilNext = (targetDay - currentDay) % 7 || 7;
+
+    // ensure next occurrence doesn't occur within the next 3 days
+    const daysToAdd = daysUntilNext < 3 ? daysUntilNext + 7 : daysUntilNext;
+
+    nextDueDate.setDate(nextDueDate.getDate() + daysToAdd + 7);
   } else {
     throw new Error("Invalid chore interval");
   }
@@ -321,7 +330,12 @@ export async function updateChore(chore: {
     // remove removed users from queue
     await tx
       .delete(choreUserTable)
-      .where(and(eq(choreUserTable.chore_id, chore.id), inArray(choreUserTable.user_id, removedUsers)));
+      .where(
+        and(
+          eq(choreUserTable.chore_id, chore.id),
+          inArray(choreUserTable.user_id, removedUsers)
+        )
+      );
 
     // add new users to the queue
     if (newQueue.length > 0) {

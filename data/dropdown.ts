@@ -3,6 +3,7 @@ import { getWhitelistedPeople } from "@/actions";
 export const intervalOptions = [
   { value: "DAILY", label: "Daily" },
   { value: "WEEKLY", label: "Weekly" },
+  { value: "BIWEEKLY", label: "Biweekly" },
   { value: "MONTHLY", label: "Monthly" }
 ] as const;
 
